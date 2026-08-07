@@ -71,7 +71,6 @@ flowchart LR
         CSV3["📄 compromisos_fijos_dummy.csv"]
     end
 
-    %% Conexiones
     U1 --> UI
     UI <--> SLIDER
     UI <--> DUCK
@@ -88,7 +87,7 @@ flowchart LR
 
 sequenceDiagram
     autonumber
-    actor User as Usuario / Cron
+    actor User as Usuario
     participant Script as pipeline.py
     participant Bronze as Capa Bronze
     participant Silver as Capa Silver
@@ -96,27 +95,26 @@ sequenceDiagram
     participant DuckDB as DuckDB Engine
     participant UI as Dashboard
 
-    User->>Script: Ejecutar Pipeline (`python pipeline.py`)
-    Script->>Script: Validar integridad de CSVs sintéticos (Hash SHA-256)
-    Script->>Bronze: Guardar datos crudos + timestamp (`data/bronze/*.parquet`)
-    Script->>Silver: Aplicar casting, deduplicar por `transaction_id`
-    Script->>Silver: Cruzar con compromisos fijos y asignar bandera `es_fijo`
+    User->>Script: Ejecutar Pipeline (python pipeline.py)
+    Script->>Script: Validar integridad de CSVs sinteticos (Hash SHA-256)
+    Script->>Bronze: Guardar datos crudos + timestamp (data/bronze/*.parquet)
+    Script->>Silver: Aplicar casting, deduplicar por transaction_id
+    Script->>Silver: Cruzar con compromisos fijos y asignar bandera es_fijo
     
-    alt Registro Inválido
-        Script->>Silver: Desviar fila a `data/cuarentena/registros_rechazados.csv`
-    else Registro Válido
-        Script->>Silver: Guardar datos limpios (`data/silver/*.parquet`)
+    alt Registro Invalido
+        Script->>Silver: Desviar fila a data/cuarentena/registros_rechazados.csv
+    else Registro Valido
+        Script->>Silver: Guardar datos limpios (data/silver/*.parquet)
     end
 
     Script->>Gold: Agrupar ingresos y gastos por mes por cliente
     Script->>Gold: Calcular KPIs (Flujo Neto, Ratio Fijo/Variable)
     Script->>Gold: Generar curva de liquidez inercial (3 y 6 meses)
-    Script->>Gold: Guardar vistas analíticas (`data/gold/*.parquet`)
+    Script->>Gold: Guardar vistas analiticas (data/gold/*.parquet)
     
     UI->>DuckDB: Consultar tablas de Capa Gold
-    DuckDB-->>UI: Retornar series de tiempo y métricas
-    UI->>UI: Recalcular curva simulada al ajustar slider ("What-If")
-
+    DuckDB-->>UI: Retornar series de tiempo y metricas
+    UI->>UI: Recalcular curva simulada al ajustar slider (What-If)
 
 Descripción de Componentes
 Módulo de Ingesta & Auditoría: Captura los archivos CSV sintéticos en data/raw/, genera la firma digital SHA-256 por archivo y agrega la etiqueta de auditoría fecha_ingesta.
@@ -131,7 +129,7 @@ Motor DuckDB: Ejecuta consultas SQL sobre los archivos Parquet en disco a alta v
 
 Dashboard Interactivo: Interfaz gráfica para visualizar la curva inercial y simular ajustes de variabilidad de gasto mediante controles tipo slider.
 
-abla de Entradas y Salidas (I/O Table)CapaComponenteEntradas (Inputs)Transformación / ProcesoSalidas (Outputs)Criterio de ErrorBronzeIngesta & Auditoríadata/raw/*.csvCálculo de hash SHA-256 y concatenación de metadatos de fecha.data/bronze/*.parquetDetener pipeline si el archivo está vacío o no coincide el hash.SilverLimpieza & Clasificacióndata/bronze/*.parquetCasting de tipos (DATE, FLOAT), deduplicación y asignación de es_fijo.data/silver/*.parquetEnviar filas a data/cuarentena/ si monto es nulo o customer_id no existe.GoldMotor de KPIs & Proyeccióndata/silver/*.parquetAgregación mensual, cálculo de Flujo Neto, Ratio Fijo/Variable y proyección inercial.data/gold/*.parquetNotificar advertencia si el historial del usuario es $< 60$ días.ConsumoDashboard & Simuladordata/gold/*.parquetConsulta SQL mediante DuckDB y aplicación del factor de ajuste.
+Tabla de Entradas y Salidas (I/O Table)CapaComponenteEntradas (Inputs)Transformación / ProcesoSalidas (Outputs)Criterio de ErrorBronzeIngesta & Auditoríadata/raw/*.csvCálculo de hash SHA-256 y concatenación de metadatos de fecha.data/bronze/*.parquetDetener pipeline si el archivo está vacío o no coincide el hash.SilverLimpieza & Clasificacióndata/bronze/*.parquetCasting de tipos (DATE, FLOAT), deduplicación y asignación de es_fijo.data/silver/*.parquetEnviar filas a data/cuarentena/ si monto es nulo o customer_id no existe.GoldMotor de KPIs & Proyeccióndata/silver/*.parquetAgregación mensual, cálculo de Flujo Neto, Ratio Fijo/Variable y proyección inercial.data/gold/*.parquetNotificar advertencia si el historial del usuario es de menos de 60 días.ConsumoDashboard & Simuladordata/gold/*.parquetConsulta SQL mediante DuckDB y aplicación del factor de ajuste.
 
 Scope del MVP (Foco y Validación Ágil)
 El MVP valida la hipótesis central mediante 3 pilares clave:
@@ -143,8 +141,90 @@ Motor Predictivo + "What-If" (Analytics): Calculadora de tendencia inercial a 3 
 Dashboard Comparativo (Frontend): Interfaz gráfica desarrollada en Next.js / Streamlit que sobrepone la Línea Base Inercial contra la Línea Simulada.
 
 Catálogo Centralizado de KPIs
-🔹 KPI 1: Flujo Neto MensualDefinición: Diferencia neta mensual entre ingresos y gastos totales ($\text{Ingresos} - \text{Gastos}$).Campos de origen: monto, tipo_movimiento, fecha_operacion.Periodicidad: Mensual.Regla de calidad: Excluir transferencias entre cuentas propias y eliminar registros con montos nulos o negativos.Interpretación de negocio: Indica si el usuario opera en superávit (capacidad de ahorro) o en déficit (pérdida de liquidez).
-🔹 KPI 2: Ratio de Gastos Fijos vs. VariablesDefinición: Porcentaje de gastos variables y discrecionales respecto al total de egresos del mes.Campos de origen: monto, tipo_movimiento, es_fijo.Periodicidad: Mensual.Regla de calidad: Garantizar que el $100\%$ de las transacciones de gasto estén etiquetadas correctamente como fijas o variables.Interpretación de negocio: Mide la elasticidad del presupuesto y determina qué tanto margen de maniobra tiene el simulador para aplicar recortes.
-🔹 KPI 3: Liquidez Futura Proyectada (3 y 6 Meses)Definición: Estimación del saldo disponible en cuenta a 90 y 180 días combinando el consumo inercial con los ajustes del simulador.Campos de origen: saldo_inicial, monto, tipo_movimiento, es_fijo, factor de ajuste.Periodicidad: Proyección a 3 y 6 meses.Regla de calidad: Requerir un historial mínimo de 60 días continuos de datos sintéticos sin vacíos transaccionales.Interpretación de negocio: Detecta con anticipación el riesgo de iliquidez y advierte al usuario cuándo se quedará sin dinero si no modifica sus hábitos.
-📂 Datasets Sintéticos del Proyecto1. transacciones_dummy.csv (Flujo de Caja Histórico)transaction_idcustomer_idfechatipo_transaccioncategoriamontocanalestatusT000001C00012026-01-02IngresoNómina2850.00TransferenciaCompletadaT000002C00012026-01-04GastoVivienda670.01DomiciliaciónCompletadaQué representa: Registro transaccional diario a nivel evento (granularidad máxima) acumulado durante 6 a 12 meses.Cómo conecta: Se vincula mediante customer_id con el cliente y usa fecha para construir las series de tiempo.Qué tan confiable: 0% de nulos en llaves o montos, tipos de datos fuertemente tipados y sin duplicados.2. clientes_dummy.csv (Perfil y Saldo Inicial)customer_idnombreedadocupacioningreso_mensual_basesaldo_inicial_cuentafecha_altaC0001Ana29Analista de datos2850.001200.002024-01-15Qué representa: Perfil maestro del usuario (1 fila por cliente) y balance inicial de su cuenta.Cómo conecta: Actúa como catálogo maestro mediante la llave primaria customer_id.Qué tan confiable: Valores numéricos no negativos y validación de unicidad en customer_id.3. compromisos_fijos_dummy.csv (Estructura Rígida de Gastos)compromiso_idcustomer_idconceptotipo_compromisomonto_mensualdia_pago_mesestadoK00001C0001Renta DepaVivienda670.005ActivoQué representa: Obligaciones financieras periódicas (renta, servicios, suscripciones, pagos de deuda).Cómo conecta: Se enlaza con customer_id y permite validar las transacciones etiquetadas como es_fijo = True.Qué tan confiable: Montos strictly mayores a cero ($>0$) y días de pago válidos entre $1$ y $31$.🛠️ Registro de Decisiones Técnicas Justificadas (ADR)Decisión 1: Adopción del formato Parquet por capa.Motivo: Brinda compresión eficiente, almacenamiento columnar y lectura nativa de alta velocidad desde Python y DuckDB.Impacto: Reduce el tamaño en disco y acelera la velocidad de respuesta en la capa analítica.Riesgo: Imposibilidad de inspeccionar los datos directamente con un editor de texto plano.Decisión 2: Orquestación mediante Script ejecutable en Python (pipeline.py).Motivo: Evita la sobrecarga de infraestructura y complejidad operativa de herramientas como Apache Airflow en la fase de MVP.Impacto: Permite ejecutar todo el procesamiento end-to-end de manera determinista con un solo comando.Riesgo: Falta de una interfaz web nativa para monitorear ejecuciones programadas.Decisión 3: Estrategia de Cuarentena para datos anómalos.Motivo: Previene que transacciones corruptas o con valores nulos detengan el procesamiento o distorsionen las proyecciones financieras.Impacto: Mantiene la capa Silver con un $100\%$ de consistencia y auditoría.Riesgo: Subestimación del gasto si una cantidad significativa de registros se desvía a cuarentena sin revisión.Decisión 4: Motor de analítica con DuckDB incorporado.Motivo: Permite ejecutar SQL complejo directamente sobre archivos Parquet locales sin requerir un servidor de base de datos como PostgreSQL.Impacto: Arquitectura de consulta ligera, rápida y zero-config.Riesgo: Limitado a la memoria RAM del equipo ejecutor.
-⚡ Riesgos y MitigacionesHeterogeneidad de Formatos:Riesgo: Estructuras variables de datos bancarios o fuentes sintéticas.Mitigación: Definición de esquemas de validación estrictos (JSON Schemas) en la Capa Bronze.Requerimientos de Cómputo para IA/Modelos:Riesgo: Carga alta de procesamiento local al simular escenarios.Mitigación: Implementación de fórmulas deterministas y agregaciones optimizadas en DuckDB / Parquet.Inconsistencia en Datos de Entrada:Riesgo: Vacíos históricos que distorsionen la tendencia inercial.Mitigación: Filtrado en Capa Silver requiriendo un piso mínimo de 60 días de historial continuo.
+🔹 KPI 1: Flujo Neto Mensual
+Definición: Diferencia neta mensual entre ingresos y gastos totales (Ingresos - Gastos).
+
+Campos de origen: monto, tipo_movimiento, fecha_operacion.
+
+Periodicidad: Mensual.
+
+Regla de calidad: Excluir transferencias entre cuentas propias y eliminar registros con montos nulos o negativos.
+
+Interpretación de negocio: Indica si el usuario opera en superávit (capacidad de ahorro) o en déficit (pérdida de liquidez).
+
+🔹 KPI 2: Ratio de Gastos Fijos vs. Variables
+Definición: Porcentaje de gastos variables y discrecionales respecto al total de egresos del mes.
+
+Campos de origen: monto, tipo_movimiento, es_fijo.
+
+Periodicidad: Mensual.
+
+Regla de calidad: Garantizar que el 100% de las transacciones de gasto estén etiquetadas correctamente como fijas o variables.
+
+Interpretación de negocio: Mide la elasticidad del presupuesto y determina qué tanto margen de maniobra tiene el simulador para aplicar recortes.
+
+🔹 KPI 3: Liquidez Futura Proyectada (3 y 6 Meses)
+Definición: Estimación del saldo disponible en cuenta a 90 y 180 días combinando el consumo inercial con los ajustes del simulador.
+
+Campos de origen: saldo_inicial, monto, tipo_movimiento, es_fijo, factor de ajuste.
+
+Periodicidad: Proyección a 3 y 6 meses.
+
+Regla de calidad: Requerir un historial mínimo de 60 días continuos de datos sintéticos sin vacíos transaccionales.
+
+Interpretación de negocio: Detecta con anticipación el riesgo de iliquidez y advierte al usuario cuándo se quedará sin dinero si no modifica sus hábitos.
+
+📂 Datasets Sintéticos del Proyecto1. transacciones_dummy.csv (Flujo de Caja Histórico)transaction_idcustomer_idfechatipo_transaccioncategoriamontocanalestatusT000001C00012026-01-02IngresoNómina2850.00TransferenciaCompletadaT000002C00012026-01-04GastoVivienda670.01DomiciliaciónCompletadaQué representa: Registro transaccional diario a nivel evento (granularidad máxima) acumulado durante 6 a 12 meses.Cómo conecta: Se vincula mediante customer_id con el cliente y usa fecha para construir las series de tiempo.Qué tan confiable: 0% de nulos en llaves o montos, tipos de datos fuertemente tipados y sin duplicados.2. clientes_dummy.csv (Perfil y Saldo Inicial)customer_idnombreedadocupacioningreso_mensual_basesaldo_inicial_cuentafecha_altaC0001Ana29Analista de datos2850.001200.002024-01-15Qué representa: Perfil maestro del usuario (1 fila por cliente) y balance inicial de su cuenta.Cómo conecta: Actúa como catálogo maestro mediante la llave primaria customer_id.Qué tan confiable: Valores numéricos no negativos y validación de unicidad en customer_id.3. compromisos_fijos_dummy.csv (Estructura Rígida de Gastos)compromiso_idcustomer_idconceptotipo_compromisomonto_mensualdia_pago_mesestadoK00001C0001Renta DepaVivienda670.005ActivoQué representa: Obligaciones financieras periódicas (renta, servicios, suscripciones, pagos de deuda).Cómo conecta: Se enlaza con customer_id y permite validar las transacciones etiquetadas como es_fijo = True.Qué tan confiable: Montos estrictamente mayores a cero y días de pago válidos entre 1 y 31.
+
+🛠️ Registro de Decisiones Técnicas Justificadas (ADR)
+Decisión 1: Adopción del formato Parquet por capa.
+
+Motivo: Brinda compresión eficiente, almacenamiento columnar y lectura nativa de alta velocidad desde Python y DuckDB.
+
+Impacto: Reduce el tamaño en disco y acelera la velocidad de respuesta en la capa analítica.
+
+Riesgo: Imposibilidad de inspeccionar los datos directamente con un editor de texto plano.
+
+Decisión 2: Orquestación mediante Script ejecutable en Python (pipeline.py).
+
+Motivo: Evita la sobrecarga de infraestructura y complejidad operativa de herramientas como Apache Airflow en la fase de MVP.
+
+Impacto: Permite ejecutar todo el procesamiento end-to-end de manera determinista con un solo comando.
+
+Riesgo: Falta de una interfaz web nativa para monitorear ejecuciones programadas.
+
+Decisión 3: Estrategia de Cuarentena para datos anómalos.
+
+Motivo: Previene que transacciones corruptas o con valores nulos detengan el procesamiento o distorsionen las proyecciones financieras.
+
+Impacto: Mantiene la capa Silver con un 100% de consistencia y auditoría.
+
+Riesgo: Subestimación del gasto si una cantidad significativa de registros se desvía a cuarentena sin revisión.
+
+Decisión 4: Motor de analítica con DuckDB incorporado.
+
+Motivo: Permite ejecutar SQL complejo directamente sobre archivos Parquet locales sin requerir un servidor de base de datos como PostgreSQL.
+
+Impacto: Arquitectura de consulta ligera, rápida y zero-config.
+
+Riesgo: Limitado a la memoria RAM del equipo ejecutor.
+
+⚡ Riesgos y Mitigaciones
+Heterogeneidad de Formatos:
+
+Riesgo: Estructuras variables de datos bancarios o fuentes sintéticas.
+
+Mitigación: Definición de esquemas de validación strictly estructurados en la Capa Bronze.
+
+Requerimientos de Cómputo para IA/Modelos:
+
+Riesgo: Carga alta de procesamiento local al simular escenarios.
+
+Mitigación: Implementación de fórmulas deterministas y agregaciones optimizadas en DuckDB / Parquet.
+
+Inconsistencia en Datos de Entrada:
+
+Riesgo: Vacíos históricos que distorsionen la tendencia inercial.
+
+Mitigación: Filtrado en Capa Silver requiriendo un piso mínimo de 60 días de historial continuo.
+
