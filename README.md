@@ -187,6 +187,7 @@ cat logs/ingestion.log
 
 docker-compose up --build
 
+3. Guarda con **`Ctrl + S`** y cierra el Bloc de notas.
+
 ---
 
-Guarda con **`Ctrl + S`**, cierra el Bloc de notas y ya estará listo
