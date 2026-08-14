@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  pipeline:
+    build: .
+    container_name: financial_digital_twin_pipeline
+    volumes:
+      - .:/app
+    environment:
+      - DATA_ROOT=./data
+      - LOG_LEVEL=INFO
+    command: python src/ingestion/ingest_bronze.py

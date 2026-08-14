@@ -1,32 +1,21 @@
-# Entornos virtuales de Python
-venv/
+# Entorno virtual y variables
+.env
 .venv/
 env/
 __pycache__/
-*.py[cod]
+*.pyc
 
-# Node.js
-node_modules/
-.next/
-out/
-build/
-dist/
+# Logs
+logs/*.log
 
-# Datos y logs
-data/raw/*
-!data/raw/.gitkeep
-data/processed/*
-!data/processed/.gitkeep
-data/gold/*
-!data/gold/.gitkeep
-*.log
+# Datos locales (Arquitectura Medallion)
+data/raw/*.csv
+data/bronze/*.parquet
+data/silver/*.parquet
+data/gold/*.parquet
+data/gold/*.duckdb
+data/quarantine/*
 
-# Variables de entorno y llaves
-.env
-.env.local
-*.pem
-*.key
-
-# Archivos de sistema
-.DS_Store
-Thumbs.db
+# IDEs
+.vscode/
+.idea/

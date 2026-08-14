@@ -166,3 +166,27 @@ El MVP valida la hipótesis central mediante 3 pilares clave:
 3. **Inconsistencia en Datos de Entrada:**
    * *Riesgo:* Vacíos históricos que distorsionen la tendencia inercial.
    * *Mitigación:* Filtrado en Capa Silver requiriendo un piso mínimo de 60 días de historial continuo.
+
+
+---
+
+## 🚀 Instrucciones de Arranque y Demo Local
+
+### 1. Configurar el entorno
+```bash
+cp .env.example .env
+pip install -r requirements.txt
+
+python src/ingestion/ingest_bronze.py
+
+# Ver los archivos Parquet generados en Capa Bronze
+ls -la data/bronze/
+
+# Revisar el log de trazabilidad y hash SHA-256
+cat logs/ingestion.log
+
+docker-compose up --build
+
+---
+
+Guarda con **`Ctrl + S`**, cierra el Bloc de notas y ya estará listo
