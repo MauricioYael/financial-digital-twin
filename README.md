@@ -69,7 +69,7 @@ El MVP valida la hipótesis central mediante 3 pilares clave:
 ## 📊 Catálogo Centralizado de KPIs
 
 ### 🔹 KPI 1: Flujo Neto Mensual
-* **Definición:** Diferencia neta mensual entre ingresos y gastos totales ($\text{Ingresos} - \text{Gastos}$).
+* **Definición:** Diferencia neta mensual entre ingresos y gastos totales (Ingresos - Gastos).
 * **Campos de origen:** `monto`, `tipo_movimiento`, `fecha_operacion`.
 * **Periodicidad:** Mensual.
 * **Regla de calidad:** Excluir transferencias entre cuentas propias y eliminar registros con montos nulos o negativos.
@@ -130,7 +130,7 @@ El MVP valida la hipótesis central mediante 3 pilares clave:
 
 * **Qué representa:** Obligaciones financieras periódicas (renta, servicios, suscripciones, pagos de deuda).
 * **Cómo conecta:** Se enlaza con `customer_id` y permite validar las transacciones etiquetadas como `es_fijo = True`.
-* **Qué tan confiable:** Montos strictly mayores a cero y días de pago válidos entre 1 y 31.
+* **Qué tan confiable:** Montos estrictamente mayores a cero y días de pago válidos entre 1 y 31.
 
 ---
 
@@ -167,7 +167,6 @@ El MVP valida la hipótesis central mediante 3 pilares clave:
    * *Riesgo:* Vacíos históricos que distorsionen la tendencia inercial.
    * *Mitigación:* Filtrado en Capa Silver requiriendo un piso mínimo de 60 días de historial continuo.
 
-
 ---
 
 ## 🚀 Instrucciones de Arranque y Demo Local
@@ -176,18 +175,23 @@ El MVP valida la hipótesis central mediante 3 pilares clave:
 ```bash
 cp .env.example .env
 pip install -r requirements.txt
+```
 
+### 2. Ejecutar la simulación del Pipeline (Raw -> Bronze)
+```bash
 python src/ingestion/ingest_bronze.py
+```
 
+### 3. Verificar los artefactos creados (Bronze & Logs)
+```bash
 # Ver los archivos Parquet generados en Capa Bronze
 ls -la data/bronze/
 
 # Revisar el log de trazabilidad y hash SHA-256
 cat logs/ingestion.log
+```
 
+### 4. Ejecución alternativa con Docker Compose
+```bash
 docker-compose up --build
-
-3. Guarda con **`Ctrl + S`** y cierra el Bloc de notas.
-
----
-
+```
