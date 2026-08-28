@@ -195,3 +195,51 @@ cat logs/ingestion.log
 ```bash
 docker-compose up --build
 ```
+
+ ## 🏗️ 1. Arquitectura del Pipeline
+ ```text
+[ Google Drive / Sheets ]
+          │  (Polling en tiempo real cada 5 segundos)
+          ▼
+    [ data/raw/ ] ──────► (Contrato de Ingesta: 6 Validaciones Previas)
+          │
+          ├──❌ Falla de Contrato ──► [ logs/ingestion_log.csv ] (Estado: FAILED / REJECTED)
+          │
+          ▼
+  [ data/bronze/ ] ─────► (Parquet Inmutable + SHA-256 + Metadatos de Auditoría)
+          │
+          ├─────────────────────────► [ docs/data_profiling_report.md ] (Perfilado Estadístico)
+          ▼
+[ src/transformations/ ] ─► (Reglas de Calidad QC-001 a QC-005)
+          │
+          ├──✅ Registros Válidos ──► [ data/silver/ ] (dim_clientes, dim_compromisos, fct_transacciones)
+          └──⚠️ Registros Rotos   ──► [ data/quarantine/ ] (transacciones_cuarentena.parquet)
+```
+ ## 🧾 2. Contrato de Ingesta (Validaciones Previas a Bronze)
+Antes de persistir cualquier archivo en la Capa Bronze, el pipeline evalúa rigurosamente 6 condiciones de entrada:
+
+| `#`|  `Validación` |  `Condicion de Error Detectada`|  `Acción y Estado en Log`|
+| :--- | :--- | :--- | :--- |
+|  `V1`| `Existencia ` | `Archivo no encontrado en data/raw ` | `FAILED — Falla controlada explícita` | 
+| :--- | :--- | :--- | :--- |
+|  `V2`| `Formato / Extensión ` | `Archivo no posee extensión .csv` | `REJECTED — Formato no soportado` | 
+| :--- | :--- | :--- | :--- |
+|  `V3`| `No vacío ` | `Archivo de 0 bytes o sin filas ` | `REJECTED — Sin datos para procesar` | 
+| :--- | :--- | :--- | :--- |
+|  `V4`| `Idempotencia ` | `SHA-256 idéntico ya registrado en manifest.json` | `SKIPPED — Omite reprocesamiento redundante` | 
+| :--- | :--- | :--- | :--- |
+|  `V5`| `Esquema Minimo ` | `Faltan campos clave obligatorios` | `REJECTED — Esquema no compatible` | 
+| :--- | :--- | :--- | :--- |
+|  `V6`| `Tipos Legibles ` | `Fechas o montos corruptos en origen ` | `WARNING — Persiste en Bronze pero genera alerta` | 
+
+## 3. Reglas de transformación y Calidad (Capa Silver & Cuarentena)
+En la transición de Bronze a Silver se aplican las siguientes reglas de negocios.
+* **QC-001 (Unicidad)**: Deduplicación de claves primarias (customer_id, compromiso_id, transaction_id).
+* **QC-002 (Integridad Monetaria)**: Montos nulos o menores/iguales a cero son rechazados (ERR_INVALID_OR_NEGATIVE_AMOUNT).
+* **QC-003 (Integridad Referencial)**: Transacciones sin un customer_id válido en la dimensión de clientes son desviadas (ERR_ORPHAN_CUSTOMER_ID).
+* **QC-004 (Tipado y Enriquecimiento)**: Estandarización a fechas ISO y etiquetado booleano de gastos recurrentes (es_fijo).
+* **QC-005 (Estatus Operativo)**: Transacciones no completadas o rechazadas son aisladas (ERR_TX_REJECTED_OR_FAILED).
+
+## 4. Modos de Ejecución y Automatización
+### 🔹 Modo 1: Sincronización en Tiempo real con Google Drive (Recomendado)
+Monitorea cada una de las hojas de Google Sheats en la nube cada 5 segundos. Cualquier cambio hecho en el navegador se descarga y procesa de forma inmediata en todas las capas:
