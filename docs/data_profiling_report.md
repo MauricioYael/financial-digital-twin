@@ -104,9 +104,9 @@
 | `monto` | `float64` | 1 | 2.1% |
 | `canal` | `str` | 0 | 0.0% |
 | `estatus` | `str` | 0 | 0.0% |
-| `_ingested_at` | `str` | 0 | 0.0% |
+| `_ingestion_timestamp` | `str` | 0 | 0.0% |
 | `_source_file` | `str` | 0 | 0.0% |
-| `_sha256_hash` | `str` | 0 | 0.0% |
+| `_raw_sha256` | `str` | 0 | 0.0% |
 
 ### Hallazgos de Calidad en Montos:
 * **Montos Negativos detectados:** 1
