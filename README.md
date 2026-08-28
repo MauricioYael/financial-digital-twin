@@ -262,6 +262,7 @@ py tests/test_controlled_failures.py
 ```
 
 ## 5. Estructura del Repositorio
+```text
 financial-digital-twin/
 ├── data/
 │   ├── raw/                      # Archivos CSV crudos (origen)
@@ -293,6 +294,8 @@ financial-digital-twin/
 ├── Dockerfile
 ├── requirements.txt
 └── README.md
+```
+
 
 ## 6. Evidencias de Auditoría
 * **Manifest de Ingesta**: data/bronze/manifest.json registra hashes SHA-256, conteo de filas y fechas UTC de procesamiento.
