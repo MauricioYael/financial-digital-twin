@@ -89,7 +89,7 @@
 ---
 
 ## 🔹 Dataset: `transacciones.parquet`
-* **Total de Registros:** 48
+* **Total de Registros:** 49
 * **Total de Columnas:** 11
 * **Posibles Duplicados en Clave Primaria:** 1
 
@@ -101,7 +101,7 @@
 | `fecha` | `str` | 0 | 0.0% |
 | `tipo_transaccion` | `str` | 0 | 0.0% |
 | `categoria` | `str` | 0 | 0.0% |
-| `monto` | `float64` | 1 | 2.1% |
+| `monto` | `float64` | 1 | 2.0% |
 | `canal` | `str` | 0 | 0.0% |
 | `estatus` | `str` | 0 | 0.0% |
 | `_ingestion_timestamp` | `str` | 0 | 0.0% |
@@ -111,7 +111,7 @@
 ### Hallazgos de Calidad en Montos:
 * **Montos Negativos detectados:** 1
 * **Montos Inválidos/Nulos:** 1
-* **Rango Monetario:** Mínimo: `$-350.00` | Máximo: `$21000.00` | Promedio: `$6748.72`
+* **Rango Monetario:** Mínimo: `$-350.00` | Máximo: `$21000.00` | Promedio: `$6643.54`
 
 ---
 
