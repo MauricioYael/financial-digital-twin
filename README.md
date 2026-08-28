@@ -195,6 +195,7 @@ cat logs/ingestion.log
 ```bash
 docker-compose up --build
 ```
+---
 
  ## 🏗️ 1. Arquitectura del Pipeline
  ```text
@@ -219,17 +220,17 @@ docker-compose up --build
 Antes de persistir cualquier archivo en la Capa Bronze, el pipeline evalúa rigurosamente 6 condiciones de entrada:
 
 | `#`|  `Validación` |  `Condicion de Error Detectada`|  `Acción y Estado en Log`|
-| :--- | :--- | :--- | :--- |
+
 |  `V1`| `Existencia ` | `Archivo no encontrado en data/raw ` | `FAILED — Falla controlada explícita` | 
-| :--- | :--- | :--- | :--- |
+
 |  `V2`| `Formato / Extensión ` | `Archivo no posee extensión .csv` | `REJECTED — Formato no soportado` | 
-| :--- | :--- | :--- | :--- |
+
 |  `V3`| `No vacío ` | `Archivo de 0 bytes o sin filas ` | `REJECTED — Sin datos para procesar` | 
-| :--- | :--- | :--- | :--- |
+
 |  `V4`| `Idempotencia ` | `SHA-256 idéntico ya registrado en manifest.json` | `SKIPPED — Omite reprocesamiento redundante` | 
-| :--- | :--- | :--- | :--- |
+
 |  `V5`| `Esquema Minimo ` | `Faltan campos clave obligatorios` | `REJECTED — Esquema no compatible` | 
-| :--- | :--- | :--- | :--- |
+
 |  `V6`| `Tipos Legibles ` | `Fechas o montos corruptos en origen ` | `WARNING — Persiste en Bronze pero genera alerta` | 
 
 ## 3. Reglas de transformación y Calidad (Capa Silver & Cuarentena)
