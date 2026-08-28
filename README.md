@@ -222,15 +222,10 @@ Antes de persistir cualquier archivo en la Capa Bronze, el pipeline evalúa rigu
 | `#`|  `Validación` |  `Condicion de Error Detectada`|  `Acción y Estado en Log`|
 | :---| :--- | :--- | :--- |
 |  `V1`| `Existencia ` | `Archivo no encontrado en data/raw ` | `FAILED — Falla controlada explícita` | 
-| :--- | :--- | :--- | :---|
 |  `V2`| `Formato / Extensión ` | `Archivo no posee extensión .csv` | `REJECTED — Formato no soportado` | 
-| :--- | :--- | :--- | :--- |
 |  `V3`| `No vacío ` | `Archivo de 0 bytes o sin filas ` | `REJECTED — Sin datos para procesar` | 
-| :--- | :--- | :--- | :--- |
 |  `V4`| `Idempotencia ` | `SHA-256 idéntico ya registrado en manifest.json` | `SKIPPED — Omite reprocesamiento redundante` | 
-| :--- | :--- | :--- | :--- |
 |  `V5`| `Esquema Minimo ` | `Faltan campos clave obligatorios` | `REJECTED — Esquema no compatible` | 
-| :--- | :--- | :--- | :--- |
 |  `V6`| `Tipos Legibles ` | `Fechas o montos corruptos en origen ` | `WARNING — Persiste en Bronze pero genera alerta` | 
 
 ## 3. Reglas de transformación y Calidad (Capa Silver & Cuarentena)
@@ -244,3 +239,62 @@ En la transición de Bronze a Silver se aplican las siguientes reglas de negocio
 ## 4. Modos de Ejecución y Automatización
 ### 🔹 Modo 1: Sincronización en Tiempo real con Google Drive (Recomendado)
 Monitorea cada una de las hojas de Google Sheats en la nube cada 5 segundos. Cualquier cambio hecho en el navegador se descarga y procesa de forma inmediata en todas las capas:
+```bash
+py src/automation/live_drive_watcher.py
+```
+
+### 🔹 Modo 2: Centinela Local (File Watcher)
+Monitorea la carpeta data/raw/ . Al pegar o guardar un nuevo archivo CSV, dispara todo el flujo de forma automatica
+```bash
+py src/automation/auto_watcher.py
+```
+
+### 🔹 Modo 3: Ejecución Manual Orquestada (End-to-End)
+Ejecuta todo el pipeline (Ingesta ➔ Perfilado ➔ Silver/Cuarentena) en un solo paso:
+```bash
+py src/orchestration/run_pipeline_e2e.py
+```
+
+### 🔹 Modo 4: Suite de Fallas Controladas (Demo de Errores)
+Ejecuta simulaciones de archivos inexistentes, extensiones inválidas, datasets vacíos y esquemas rotos:
+```bash
+py tests/test_controlled_failures.py
+```
+
+## 5. Estructura del Repositorio
+financial-digital-twin/
+├── data/
+│   ├── raw/                      # Archivos CSV crudos (origen)
+│   ├── bronze/                   # Datasets Parquet inmutables + Metadatos
+│   │   └── manifest.json         # Control de versiones e idempotencia por Hash SHA-256
+│   ├── silver/                   # Datos limpios (dim_clientes, dim_compromisos, fct_transacciones)
+│   └── quarantine/               # Registros anómalos (transacciones_cuarentena.parquet)
+├── docs/
+│   ├── canvas-v0.md              # Documento de diseño arquitectural
+│   └── data_profiling_report.md  # Reporte estadístico generado automáticamente
+├── logs/
+│   └── ingestion_log.csv         # Bitácora histórica estructurada de ingesta
+├── src/
+│   ├── ingestion/
+│   │   ├── fetch_drive_data.py   # Conector con Google Drive / Sheets
+│   │   └── pipeline.py           # Pipeline de ingesta con validación de contrato
+│   ├── quality/
+│   │   └── profile_data.py       # Motor de perfilado de datos y generación de reportes
+│   ├── transformations/
+│   │   └── transform_silver.py   # Transformación Silver y aislamiento en Cuarentena
+│   ├── orchestration/
+│   │   └── run_pipeline_e2e.py   # Orquestador del flujo integral de capas
+│   └── automation/
+│       ├── auto_watcher.py       # Centinela local de archivos en tiempo real
+│       └── live_drive_watcher.py # Sincronizador en vivo con Google Drive
+├── tests/
+│   └── test_controlled_failures.py # Pruebas automatizadas de fallas controladas
+├── docker-compose.yml
+├── Dockerfile
+├── requirements.txt
+└── README.md
+
+## 6. Evidencias de Auditoría
+* **Manifest de Ingesta**: data/bronze/manifest.json registra hashes SHA-256, conteo de filas y fechas UTC de procesamiento.
+* **Log Consolidado**: logs/ingestion_log.csv audita cada intento de ejecución con estados SUCCESS, WARNING, SKIPPED, REJECTED o FAILED.
+* **Reporte de Calidad**: docs/data_profiling_report.md documenta la distribución estadística, nulos y anomalías de los datos.
