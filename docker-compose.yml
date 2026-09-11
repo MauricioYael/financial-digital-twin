@@ -1,34 +1,41 @@
 version: '3.8'
 
-x-airflow-common:
-  &airflow-common
-  image: apache/airflow:2.8.1-python3.11
-  environment:
-    &airflow-common-env
-    AIRFLOW__CORE__EXECUTOR: SequentialExecutor
-    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////root/airflow/airflow.db
-    AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
-  volumes:
-    - ./:/opt/airflow/project_root
-    - ./dags:/opt/airflow/dags
-    - ./logs:/opt/airflow/logs
-    - ./data:/opt/airflow/data
-    - ./db:/opt/airflow/db
-  user: "501:20"
+services:
+  airflow-webserver:
+    image: apache/airflow:2.8.1-python3.11
+    environment:
+      AIRFLOW__CORE__EXECUTOR: SequentialExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/db/airflow.db
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
+    volumes:
+      - ./:/opt/airflow/project_root
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./data:/opt/airflow/data
+      - ./db:/opt/airflow/db
+    user: "501:0"
+    command: webserver
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
 
-  services:
-    airflow-webserver:
-      <<: *airflow-common
-      command: webserver
-      ports:
-        - "8080:8080"
-      healthcheck:
-        test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
-        interval: 30s
-        timeout: 30s
-        retries: 3
-      restart: always
-
-    airflow-scheduler:
-      <<: *airflow-common
-      command: scheduler
+  airflow-scheduler:
+    image: apache/airflow:2.8.1-python3.11
+    environment:
+      AIRFLOW__CORE__EXECUTOR: SequentialExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/db/airflow.db
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
+    volumes:
+      - ./:/opt/airflow/project_root
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./data:/opt/airflow/data
+      - ./db:/opt/airflow/db
+    user: "501:0"
+    command: scheduler
+    restart: always

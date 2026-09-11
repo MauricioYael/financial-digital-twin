@@ -1,0 +1,15 @@
+[2026-09-11T21:35:32.218+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: financial_bronze_ingestion_v1.validate_files scheduled__2026-09-10T00:00:00+00:00 [queued]>
+[2026-09-11T21:35:32.237+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: financial_bronze_ingestion_v1.validate_files scheduled__2026-09-10T00:00:00+00:00 [queued]>
+[2026-09-11T21:35:32.239+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 2
+[2026-09-11T21:35:32.358+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): validate_files> on 2026-09-10 00:00:00+00:00
+[2026-09-11T21:35:32.373+0000] {standard_task_runner.py:60} INFO - Started process 48 to run task
+[2026-09-11T21:35:32.405+0000] {standard_task_runner.py:87} INFO - Running: ['airflow', 'tasks', 'run', 'financial_bronze_ingestion_v1', 'validate_files', 'scheduled__2026-09-10T00:00:00+00:00', '--job-id', '2', '--raw', '--subdir', 'DAGS_FOLDER/financial_bronze_dag.py', '--cfg-path', '/tmp/tmp1cqxoa7r']
+[2026-09-11T21:35:32.421+0000] {standard_task_runner.py:88} INFO - Job 2: Subtask validate_files
+[2026-09-11T21:35:32.716+0000] {task_command.py:423} INFO - Running <TaskInstance: financial_bronze_ingestion_v1.validate_files scheduled__2026-09-10T00:00:00+00:00 [running]> on host 0ad7a21d03fe
+[2026-09-11T21:35:32.977+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='data_engineer' AIRFLOW_CTX_DAG_ID='financial_bronze_ingestion_v1' AIRFLOW_CTX_TASK_ID='validate_files' AIRFLOW_CTX_EXECUTION_DATE='2026-09-10T00:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2026-09-10T00:00:00+00:00'
+[2026-09-11T21:35:32.983+0000] {logging_mixin.py:188} INFO - 🔍 [validate_files] Verificando existencia de archivos en data/raw/...
+[2026-09-11T21:35:33.000+0000] {logging_mixin.py:188} INFO - ✅ Todos los archivos crudos existen y son válidos para procesar.
+[2026-09-11T21:35:33.001+0000] {python.py:201} INFO - Done. Returned value was: None
+[2026-09-11T21:35:33.019+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=financial_bronze_ingestion_v1, task_id=validate_files, execution_date=20260910T000000, start_date=20260911T213532, end_date=20260911T213533
+[2026-09-11T21:35:33.097+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2026-09-11T21:35:33.152+0000] {taskinstance.py:3280} INFO - 3 downstream tasks scheduled from follow-on schedule check
