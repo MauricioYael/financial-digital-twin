@@ -191,3 +191,17 @@ ModuleNotFoundError: No module named 'src'
 [2026-09-11T21:40:38.164+0000] {logging_mixin.py:188} INFO - [2026-09-11T21:40:38.164+0000] {dag.py:3036} INFO - Sync 1 DAGs
 [2026-09-11T21:40:38.191+0000] {logging_mixin.py:188} INFO - [2026-09-11T21:40:38.191+0000] {dag.py:3823} INFO - Setting next_dagrun for financial_bronze_ingestion_v1 to 2026-09-11 00:00:00+00:00, run_after=2026-09-12 00:00:00+00:00
 [2026-09-11T21:40:38.255+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/financial_bronze_dag.py took 0.389 seconds
+[2026-09-11T21:41:08.940+0000] {processor.py:161} INFO - Started process (PID=179) to work on /opt/airflow/dags/financial_bronze_dag.py
+[2026-09-11T21:41:08.942+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/financial_bronze_dag.py for tasks to queue
+[2026-09-11T21:41:08.944+0000] {logging_mixin.py:188} INFO - [2026-09-11T21:41:08.944+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/financial_bronze_dag.py
+[2026-09-11T21:41:09.225+0000] {processor.py:840} INFO - DAG(s) 'financial_bronze_ingestion_v1' retrieved from /opt/airflow/dags/financial_bronze_dag.py
+[2026-09-11T21:41:09.251+0000] {logging_mixin.py:188} INFO - [2026-09-11T21:41:09.251+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2026-09-11T21:41:09.274+0000] {logging_mixin.py:188} INFO - [2026-09-11T21:41:09.274+0000] {dag.py:3823} INFO - Setting next_dagrun for financial_bronze_ingestion_v1 to 2026-09-11 00:00:00+00:00, run_after=2026-09-12 00:00:00+00:00
+[2026-09-11T21:41:09.335+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/financial_bronze_dag.py took 0.398 seconds
+[2026-09-11T21:41:40.126+0000] {processor.py:161} INFO - Started process (PID=181) to work on /opt/airflow/dags/financial_bronze_dag.py
+[2026-09-11T21:41:40.128+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/financial_bronze_dag.py for tasks to queue
+[2026-09-11T21:41:40.130+0000] {logging_mixin.py:188} INFO - [2026-09-11T21:41:40.130+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/financial_bronze_dag.py
+[2026-09-11T21:41:40.443+0000] {processor.py:840} INFO - DAG(s) 'financial_bronze_ingestion_v1' retrieved from /opt/airflow/dags/financial_bronze_dag.py
+[2026-09-11T21:41:40.482+0000] {logging_mixin.py:188} INFO - [2026-09-11T21:41:40.481+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2026-09-11T21:41:40.510+0000] {logging_mixin.py:188} INFO - [2026-09-11T21:41:40.510+0000] {dag.py:3823} INFO - Setting next_dagrun for financial_bronze_ingestion_v1 to 2026-09-11 00:00:00+00:00, run_after=2026-09-12 00:00:00+00:00
+[2026-09-11T21:41:40.569+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/financial_bronze_dag.py took 0.445 seconds
