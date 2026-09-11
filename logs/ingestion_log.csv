@@ -32,3 +32,18 @@ timestamp,source_file,file_hash,row_count,column_count,status,message
 2026-08-28T02:22:56.325664+00:00,clientes.csv,8cffcc77cf7dc2d36797a9b3d91aaa1585fc48739c525cfa04aecf12c46a9f30,5,7,REJECTED,Esquema inválido. Faltan columnas: ['fecha_registro']
 2026-08-28T02:22:56.329616+00:00,compromisos_fijos.csv,352512ed0ae1eb12c52d489d4eca0220a28e9e1c9771c4fbf6729fa98262c2ba,12,7,REJECTED,Esquema inválido. Faltan columnas: ['monto_esperado']
 2026-08-28T02:22:56.349026+00:00,transacciones.csv,352710b5c4360e9438e996049eb511401055883fffc35ac99a7947242c04c9f1,49,11,WARNING,1 montos no numéricos
+2026-08-28T22:14:10.003850+00:00,clientes.csv,8cffcc77cf7dc2d36797a9b3d91aaa1585fc48739c525cfa04aecf12c46a9f30,5,7,REJECTED,Esquema inválido. Faltan columnas: ['fecha_registro']
+2026-08-28T22:14:10.019086+00:00,compromisos_fijos.csv,352512ed0ae1eb12c52d489d4eca0220a28e9e1c9771c4fbf6729fa98262c2ba,12,7,REJECTED,Esquema inválido. Faltan columnas: ['monto_esperado']
+2026-08-28T22:14:10.673975+00:00,transacciones.csv,133cb80da84439788ea43596c62c477e64658262a5e0162732eaf4be23846cbb,50,11,WARNING,1 fechas no estándar; 2 montos no numéricos
+2026-08-28T22:14:18.584156+00:00,clientes.csv,8cffcc77cf7dc2d36797a9b3d91aaa1585fc48739c525cfa04aecf12c46a9f30,5,7,REJECTED,Esquema inválido. Faltan columnas: ['fecha_registro']
+2026-08-28T22:14:18.598189+00:00,compromisos_fijos.csv,352512ed0ae1eb12c52d489d4eca0220a28e9e1c9771c4fbf6729fa98262c2ba,12,7,REJECTED,Esquema inválido. Faltan columnas: ['monto_esperado']
+2026-08-28T22:14:18.630542+00:00,transacciones.csv,24d032f4e7c4b6cd4ac9c9c26da9f2c8b3a9d1dc3ef1c0628ea56e48dbe1427b,50,11,WARNING,1 fechas no estándar; 2 montos no numéricos
+2026-08-28T22:14:25.666444+00:00,clientes.csv,8cffcc77cf7dc2d36797a9b3d91aaa1585fc48739c525cfa04aecf12c46a9f30,5,7,REJECTED,Esquema inválido. Faltan columnas: ['fecha_registro']
+2026-08-28T22:14:25.683698+00:00,compromisos_fijos.csv,352512ed0ae1eb12c52d489d4eca0220a28e9e1c9771c4fbf6729fa98262c2ba,12,7,REJECTED,Esquema inválido. Faltan columnas: ['monto_esperado']
+2026-08-28T22:14:25.863100+00:00,transacciones.csv,08d96708c8f953092c56c6948546f63ef81191b5c66b6c585454fd4b12a22119,50,11,WARNING,1 montos no numéricos
+2026-08-28T22:17:36.197869+00:00,clientes.csv,8cffcc77cf7dc2d36797a9b3d91aaa1585fc48739c525cfa04aecf12c46a9f30,5,7,REJECTED,Esquema inválido. Faltan columnas: ['fecha_registro']
+2026-08-28T22:17:36.222931+00:00,compromisos_fijos.csv,352512ed0ae1eb12c52d489d4eca0220a28e9e1c9771c4fbf6729fa98262c2ba,12,7,REJECTED,Esquema inválido. Faltan columnas: ['monto_esperado']
+2026-08-28T22:17:36.242871+00:00,transacciones.csv,08d96708c8f953092c56c6948546f63ef81191b5c66b6c585454fd4b12a22119,50,0,SKIPPED,Archivo idéntico ya procesado (Idempotencia activa)
+2026-08-28T22:18:07.757032+00:00,clientes.csv,035dcf8eda0a5c9d2e90755cde05bc2f427c50057d5cbe3f4e97d66218b0fe43,6,7,REJECTED,Esquema inválido. Faltan columnas: ['fecha_registro']
+2026-08-28T22:18:07.778393+00:00,compromisos_fijos.csv,352512ed0ae1eb12c52d489d4eca0220a28e9e1c9771c4fbf6729fa98262c2ba,12,7,REJECTED,Esquema inválido. Faltan columnas: ['monto_esperado']
+2026-08-28T22:18:07.783495+00:00,transacciones.csv,08d96708c8f953092c56c6948546f63ef81191b5c66b6c585454fd4b12a22119,50,0,SKIPPED,Archivo idéntico ya procesado (Idempotencia activa)

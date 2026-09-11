@@ -1,8 +1,8 @@
 {
     "transacciones.csv": {
-        "hash": "352710b5c4360e9438e996049eb511401055883fffc35ac99a7947242c04c9f1",
-        "ingested_at": "2026-08-28T02:22:56.344935+00:00",
-        "rows": 49,
+        "hash": "08d96708c8f953092c56c6948546f63ef81191b5c66b6c585454fd4b12a22119",
+        "ingested_at": "2026-08-28T22:14:25.809995+00:00",
+        "rows": 50,
         "columns": 11,
         "parquet_path": "data/bronze\\transacciones.parquet",
         "status": "WARNING"

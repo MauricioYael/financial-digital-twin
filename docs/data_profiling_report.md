@@ -89,9 +89,9 @@
 ---
 
 ## 🔹 Dataset: `transacciones.parquet`
-* **Total de Registros:** 49
+* **Total de Registros:** 50
 * **Total de Columnas:** 11
-* **Posibles Duplicados en Clave Primaria:** 1
+* **Posibles Duplicados en Clave Primaria:** 2
 
 ### Conteo de Nulos y Tipos de Datos:
 | Columna | Tipo de Dato | Valores Nulos | % Nulidad |
@@ -111,7 +111,7 @@
 ### Hallazgos de Calidad en Montos:
 * **Montos Negativos detectados:** 1
 * **Montos Inválidos/Nulos:** 1
-* **Rango Monetario:** Mínimo: `$-350.00` | Máximo: `$21000.00` | Promedio: `$6643.54`
+* **Rango Monetario:** Mínimo: `$-350.00` | Máximo: `$21000.00` | Promedio: `$6517.14`
 
 ---
 
