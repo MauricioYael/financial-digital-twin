@@ -301,3 +301,33 @@ financial-digital-twin/
 * **Manifest de Ingesta**: data/bronze/manifest.json registra hashes SHA-256, conteo de filas y fechas UTC de procesamiento.
 * **Log Consolidado**: logs/ingestion_log.csv audita cada intento de ejecución con estados SUCCESS, WARNING, SKIPPED, REJECTED o FAILED.
 * **Reporte de Calidad**: docs/data_profiling_report.md documenta la distribución estadística, nulos y anomalías de los datos.
+
+## Capa Silver y Framework de Calidad
+
+### Matriz de Transformación Campo por Campo
+| Campo | Bronze | Silver | Regla | Error / Acción |
+| :--- | :--- | :--- | :--- | :--- |
+| `customer_id` | texto | string | Obligatorio + unicidad + referencialidad | Cuarentena (`ERR_ID_DUPLICADO`, `ERR_CLIENTE_INEXISTENTE`) |
+| `fecha` | texto | date | Formato ISO parseable (`YYYY-MM-DD`) | Rechazar a Cuarentena (`ERR_FECHA_INVALIDA`) |
+| `monto` | texto/número | decimal | Numérico no nulo | Rechazar a Cuarentena (`ERR_MONTO_INVALIDO`) |
+| `tipo_transaccion` | texto | catálogo | Valores permitidos: ingreso, gasto, transferencia | Cuarentena (`ERR_CATALOGO_INVALIDO`) |
+| `nombre` | texto | string | Normalizar mayúsculas y espacios | Corrección técnica en Silver |
+
+### Errores Controlados Implementados
+1. `ERR_ID_DUPLICADO`: Detección de claves primarias repetidas en clientes.
+2. `ERR_FECHA_INVALIDA`: Detección de fechas no parseables o con caracteres erróneos.
+3. `ERR_CLIENTE_INEXISTENTE`: Detección de transacciones o créditos huérfanos sin cliente asociado.
+
+### Ejecución Reproducible
+1. Ingesta a Bronze (Airflow o script de carga):
+   ```powershell
+   python src/financial_bronze_ingest.py
+
+---
+
+### Paso 3: Ejecutar y Verificar en Terminal
+
+Abre tu terminal de PowerShell en la raíz del proyecto y corre:
+
+```powershell
+python src/silver_pipeline.py
