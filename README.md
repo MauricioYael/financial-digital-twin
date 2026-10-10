@@ -269,27 +269,22 @@ financial-digital-twin/
 │   ├── bronze/                   # Datasets Parquet inmutables + Metadatos
 │   │   └── manifest.json         # Control de versiones e idempotencia por Hash SHA-256
 │   ├── silver/                   # Datos limpios (dim_clientes, dim_compromisos, fct_transacciones)
+│   ├── gold/                     # gold_cliente_mes.parquet (Consolidado mensual)
 │   └── quarantine/               # Registros anómalos (transacciones_cuarentena.parquet)
 ├── docs/
-│   ├── canvas-v0.md              # Documento de diseño arquitectural
 │   └── data_profiling_report.md  # Reporte estadístico generado automáticamente
 ├── logs/
 │   └── ingestion_log.csv         # Bitácora histórica estructurada de ingesta
+├── reports/
+│   └── validation_report.csv     # Métricas de calidad por dataset
 ├── src/
-│   ├── ingestion/
-│   │   ├── fetch_drive_data.py   # Conector con Google Drive / Sheets
-│   │   └── pipeline.py           # Pipeline de ingesta con validación de contrato
-│   ├── quality/
-│   │   └── profile_data.py       # Motor de perfilado de datos y generación de reportes
-│   ├── transformations/
-│   │   └── transform_silver.py   # Transformación Silver y aislamiento en Cuarentena
-│   ├── orchestration/
-│   │   └── run_pipeline_e2e.py   # Orquestador del flujo integral de capas
-│   └── automation/
-│       ├── auto_watcher.py       # Centinela local de archivos en tiempo real
-│       └── live_drive_watcher.py # Sincronizador en vivo con Google Drive
-├── tests/
-│   └── test_controlled_failures.py # Pruebas automatizadas de fallas controladas
+│   ├── dashboard.py              # Dashboard interactivo Streamlit (BBVA + Tecmilenio)
+│   ├── gold_builder.py           # Transformación Silver -> Gold
+│   ├── gold_validator.py         # Suite de validaciones Gold
+│   ├── reconcile_gold.py         # Inspector de conciliación Silver vs Gold
+│   ├── ingestion/                # Pipelines de ingesta y contrato Bronze
+│   ├── transformations/          # Transformaciones Silver y Cuarentena
+│   └── automation/               # File watcher y sincronizador en tiempo real
 ├── docker-compose.yml
 ├── Dockerfile
 ├── requirements.txt
@@ -331,3 +326,23 @@ Abre tu terminal de PowerShell en la raíz del proyecto y corre:
 
 ```powershell
 python src/silver_pipeline.py
+```
+---
+
+## Capa Gold y KPIs
+
+### Contrato de ingesta (Validaciones previas a bronze)
+| # | Validación | Condiciones de Error detectadas | Acción y Estados en logs |
+| :--- | :--- | :--- | :--- | :--- |
+| `v1` | Existencia | Archivo no encontrado en data/raw | `FAILED`- Falla controlada explícita | 
+| `v2` | Formato/Extensión | Archivo no posee extensíon `.csv` | `REJECTED`- Formato no soportado |
+| `v3` | No vacío | Archivo de 0 bytes o sin filas | `REJECTED` - Sin datos para procesar | 
+| `v4` | Idempotencia | SHA-256 identicos ya registrado en `manifest.json` | `SKIPPED`- Omite reprocesamientos redundantes |
+| `v5` | Esquema Mínimo | Falta campos clave obligatorios | `REJECTED`-Omite reprocesamientos redundantes | 
+| `v6` | Tipos Legibles | Fechas o montos corruptos en origen | `WARNING`- Persiten en Bronze pero genera alerta | 
+
+---
+
+## Catalogo y Diccionario de KPIs (Capa Gold)
+La capa Gold materializa el comportamiento financiero mensual en la tabla `gold_cliente_mes.parquet`. Todos los cálculos se rigen por las siguientes fórmulas y reglas defensibles:
+
