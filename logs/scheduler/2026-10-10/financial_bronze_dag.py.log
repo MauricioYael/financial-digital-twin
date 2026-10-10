@@ -670,3 +670,52 @@
 [2026-10-10T02:54:57.411+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:54:57.410+0000] {dag.py:3036} INFO - Sync 1 DAGs
 [2026-10-10T02:54:57.534+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:54:57.533+0000] {dag.py:3823} INFO - Setting next_dagrun for financial_bronze_ingestion_v1 to 2026-10-10 00:00:00+00:00, run_after=2026-10-11 00:00:00+00:00
 [2026-10-10T02:54:57.693+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/financial_bronze_dag.py took 1.725 seconds
+[2026-10-10T02:55:28.124+0000] {processor.py:161} INFO - Started process (PID=1321) to work on /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:55:28.130+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/financial_bronze_dag.py for tasks to queue
+[2026-10-10T02:55:28.135+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:55:28.134+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:55:28.926+0000] {processor.py:840} INFO - DAG(s) 'financial_bronze_ingestion_v1' retrieved from /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:55:29.130+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:55:29.130+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2026-10-10T02:55:29.327+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:55:29.326+0000] {dag.py:3823} INFO - Setting next_dagrun for financial_bronze_ingestion_v1 to 2026-10-10 00:00:00+00:00, run_after=2026-10-11 00:00:00+00:00
+[2026-10-10T02:55:29.525+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/financial_bronze_dag.py took 1.435 seconds
+[2026-10-10T02:55:59.929+0000] {processor.py:161} INFO - Started process (PID=1323) to work on /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:55:59.934+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/financial_bronze_dag.py for tasks to queue
+[2026-10-10T02:55:59.938+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:55:59.937+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:56:01.143+0000] {processor.py:840} INFO - DAG(s) 'financial_bronze_ingestion_v1' retrieved from /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:56:01.187+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:56:01.187+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2026-10-10T02:56:01.229+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:56:01.229+0000] {dag.py:3823} INFO - Setting next_dagrun for financial_bronze_ingestion_v1 to 2026-10-10 00:00:00+00:00, run_after=2026-10-11 00:00:00+00:00
+[2026-10-10T02:56:01.448+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/financial_bronze_dag.py took 1.557 seconds
+[2026-10-10T02:56:31.861+0000] {processor.py:161} INFO - Started process (PID=1325) to work on /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:56:31.870+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/financial_bronze_dag.py for tasks to queue
+[2026-10-10T02:56:31.880+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:56:31.875+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:56:32.389+0000] {processor.py:840} INFO - DAG(s) 'financial_bronze_ingestion_v1' retrieved from /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:56:32.438+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:56:32.438+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2026-10-10T02:56:32.483+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:56:32.482+0000] {dag.py:3823} INFO - Setting next_dagrun for financial_bronze_ingestion_v1 to 2026-10-10 00:00:00+00:00, run_after=2026-10-11 00:00:00+00:00
+[2026-10-10T02:56:32.633+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/financial_bronze_dag.py took 0.833 seconds
+[2026-10-10T02:57:03.354+0000] {processor.py:161} INFO - Started process (PID=1327) to work on /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:57:03.358+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/financial_bronze_dag.py for tasks to queue
+[2026-10-10T02:57:03.362+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:57:03.361+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:57:03.981+0000] {processor.py:840} INFO - DAG(s) 'financial_bronze_ingestion_v1' retrieved from /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:57:04.051+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:57:04.050+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2026-10-10T02:57:04.096+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:57:04.096+0000] {dag.py:3823} INFO - Setting next_dagrun for financial_bronze_ingestion_v1 to 2026-10-10 00:00:00+00:00, run_after=2026-10-11 00:00:00+00:00
+[2026-10-10T02:57:04.237+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/financial_bronze_dag.py took 0.915 seconds
+[2026-10-10T02:57:34.827+0000] {processor.py:161} INFO - Started process (PID=1329) to work on /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:57:34.841+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/financial_bronze_dag.py for tasks to queue
+[2026-10-10T02:57:34.853+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:57:34.848+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:57:35.493+0000] {processor.py:840} INFO - DAG(s) 'financial_bronze_ingestion_v1' retrieved from /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:57:35.610+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:57:35.609+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2026-10-10T02:57:35.697+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:57:35.696+0000] {dag.py:3823} INFO - Setting next_dagrun for financial_bronze_ingestion_v1 to 2026-10-10 00:00:00+00:00, run_after=2026-10-11 00:00:00+00:00
+[2026-10-10T02:57:35.978+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/financial_bronze_dag.py took 1.170 seconds
+[2026-10-10T02:58:06.595+0000] {processor.py:161} INFO - Started process (PID=1331) to work on /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:58:06.600+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/financial_bronze_dag.py for tasks to queue
+[2026-10-10T02:58:06.603+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:58:06.603+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:58:07.050+0000] {processor.py:840} INFO - DAG(s) 'financial_bronze_ingestion_v1' retrieved from /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:58:07.124+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:58:07.124+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2026-10-10T02:58:07.198+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:58:07.197+0000] {dag.py:3823} INFO - Setting next_dagrun for financial_bronze_ingestion_v1 to 2026-10-10 00:00:00+00:00, run_after=2026-10-11 00:00:00+00:00
+[2026-10-10T02:58:07.355+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/financial_bronze_dag.py took 0.794 seconds
+[2026-10-10T02:58:37.891+0000] {processor.py:161} INFO - Started process (PID=1333) to work on /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:58:37.901+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/financial_bronze_dag.py for tasks to queue
+[2026-10-10T02:58:37.908+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:58:37.906+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:58:38.653+0000] {processor.py:840} INFO - DAG(s) 'financial_bronze_ingestion_v1' retrieved from /opt/airflow/dags/financial_bronze_dag.py
+[2026-10-10T02:58:38.696+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:58:38.695+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2026-10-10T02:58:38.737+0000] {logging_mixin.py:188} INFO - [2026-10-10T02:58:38.736+0000] {dag.py:3823} INFO - Setting next_dagrun for financial_bronze_ingestion_v1 to 2026-10-10 00:00:00+00:00, run_after=2026-10-11 00:00:00+00:00
+[2026-10-10T02:58:38.879+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/financial_bronze_dag.py took 1.046 seconds
