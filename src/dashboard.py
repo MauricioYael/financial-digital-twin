@@ -6,6 +6,7 @@ import numpy as np
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
+from macro_engine import calculate_macro_projections
 
 def find_column(df, candidates):
     for col in candidates:
@@ -239,6 +240,8 @@ with st.sidebar:
             "🏠 Dashboard", 
             "📊 Calidad de Datos", 
             "🏆 Capa Gold (KPIs)", 
+            "📈 Proyección Macro",
+            "🤖 Asistente IA",
             "🔎 Conciliación Silver vs Gold", 
             "🛡️ Cuarentena"
         ],
@@ -498,22 +501,97 @@ elif selected_nav == "🏆 Capa Gold (KPIs)":
         if sel_c != "Todos": df_f = df_f[df_f['customer_id'] == sel_c]
 
         tot_ing = df_f['ingresos_totales'].sum()
-        tot_gas = df_f['gastos_totales'].sum()
+        
+        # Lectura flexible de deuda y gastos operativos
+        if 'pagos_deuda' in df_f.columns:
+            tot_deuda = df_f['pagos_deuda'].sum()
+        elif 'pago_deuda_mensual' in df_f.columns:
+            tot_deuda = df_f['pago_deuda_mensual'].sum()
+        else:
+            tot_deuda = 0.0
+
+        if 'gastos_operativos' in df_f.columns:
+            tot_op = df_f['gastos_operativos'].sum()
+        else:
+            tot_gas_gen = df_f['gastos_totales'].sum()
+            tot_op = max(0.0, tot_gas_gen - tot_deuda)
+
         flujo = df_f['flujo_neto'].sum()
-        ahorro = df_f['tasa_ahorro'].mean() * 100
-        deuda = df_f['ratio_endeudamiento'].mean() * 100
+        deuda_ratio = df_f['ratio_endeudamiento'].mean() * 100
 
         g1, g2, g3, g4, g5 = st.columns(5)
         g1.metric("Ingresos Totales", f"${tot_ing:,.2f}")
-        g2.metric("Gastos Totales", f"${tot_gas:,.2f}")
-        g3.metric("Flujo Neto", f"${flujo:,.2f}")
-        g4.metric("Tasa Ahorro Prom.", f"{ahorro:.1f}%")
-        g5.metric("Ratio Endeudamiento", f"{deuda:.1f}%")
+        g2.metric("Gastos Operativos", f"${tot_op:,.2f}")
+        g3.metric("Pagos de Préstamos", f"${tot_deuda:,.2f}")
+        g4.metric("Flujo Neto Real", f"${flujo:,.2f}")
+        g5.metric("Ratio Endeudamiento", f"{deuda_ratio:.1f}%")
 
         st.write("")
         st.dataframe(df_f, use_container_width=True, hide_index=True)
     else:
         st.warning("⚠️ Ejecuta `python src/gold_builder.py` para generar la capa Gold.")
+
+elif selected_nav == "📈 Proyección Macro":
+    st.markdown("<h3 style='color: #2DCCCD;'>📈 Proyecciones Macroeconómicas a 3 y 6 Meses</h3>", unsafe_allow_html=True)
+    st.caption("Ajusta las variables macroeconómicas globales para proyectar la liquidez inercial ajustada por inflación.")
+    if not df_gold.empty:
+        m1, m2 = st.columns(2)
+        with m1:
+            inf_val = st.slider("Tasa de Inflación Anual Estimada (%)", min_value=1.0, max_value=12.0, value=4.5, step=0.1) / 100.0
+        with m2:
+            usd_val = st.number_input("Tipo de Cambio USD/MXN", min_value=10.0, max_value=30.0, value=18.50, step=0.25)
+        
+        df_proj = calculate_macro_projections(df_gold, inflation_annual=inf_val, usd_mxn=usd_val)
+        
+        st.markdown("<div class='chart-panel'>", unsafe_allow_html=True)
+        st.markdown("<div class='panel-header'><span>📊 Tabla de Proyecciones Ajustadas por Inflación</span></div>", unsafe_allow_html=True)
+        st.dataframe(df_proj, use_container_width=True, hide_index=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+    else:
+        st.warning("⚠️ Se requiere generar la capa Gold para calcular proyecciones macroeconómicas.")
+
+elif selected_nav == "🤖 Asistente IA":
+    st.markdown("<h3 style='color: #2DCCCD;'>🤖 Asistente Conversacional Financiero BBVA</h3>", unsafe_allow_html=True)
+    st.caption("Haz preguntas en lenguaje natural sobre la salud financiera, deudas, flujo de caja o proyecciones.")
+    
+    if "messages" not in st.session_state:
+        st.session_state.messages = [
+            {"role": "assistant", "content": "¡Hola! Soy tu asistente del Gemelo Digital Financiero BBVA. ¿En qué puedo ayudarte hoy sobre tus datos o métricas de la capa Gold?"}
+        ]
+
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+
+    if prompt := st.chat_input("Ej: ¿Cuál es el total de mis pagos de préstamos?"):
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+        p_lower = prompt.lower()
+        if "prestamo" in p_lower or "deuda" in p_lower or "credito" in p_lower:
+            if not df_gold.empty:
+                col_d = 'pagos_deuda' if 'pagos_deuda' in df_gold.columns else 'pago_deuda_mensual'
+                deuda_tot = df_gold[col_d].sum() if col_d in df_gold.columns else 0.0
+                ratio_d = df_gold['ratio_endeudamiento'].mean() * 100 if 'ratio_endeudamiento' in df_gold.columns else 0.0
+                ans = f"💳 **Resumen de Deuda:** El total consolidado de pagos de préstamos en la capa Gold es de **${deuda_tot:,.2f}**, representando un ratio de endeudamiento promedio del **{ratio_d:.1f}%** sobre los ingresos."
+            else:
+                ans = "⚠️ Aún no hay datos cargados en la capa Gold para consultar información de préstamos."
+        elif "flujo" in p_lower or "neto" in p_lower or "ingreso" in p_lower:
+            if not df_gold.empty:
+                flujo_tot = df_gold['flujo_neto'].sum() if 'flujo_neto' in df_gold.columns else 0.0
+                ing_tot = df_gold['ingresos_totales'].sum() if 'ingresos_totales' in df_gold.columns else 0.0
+                ans = f"💵 **Resumen de Liquidez:** Tus ingresos totales consolidados son de **${ing_tot:,.2f}** y el flujo neto disponible es de **${flujo_tot:,.2f}**."
+            else:
+                ans = "⚠️ Aún no hay datos cargados en la capa Gold."
+        elif "proyeccion" in p_lower or "inflacion" in p_lower or "meses" in p_lower:
+            ans = "📈 **Proyecciones:** Puedes ir al módulo **Proyección Macro** para simular tu liquidez ajustada a 3 y 6 meses con la tasa de inflación y el tipo de cambio que elijas."
+        else:
+            ans = f"🤖 **Gemelo Digital:** Entendido. Todos los indicadores sobre '{prompt}' se encuentran en constante sincronización con el Lakehouse en la capa Gold (`gold_cliente_mes.parquet`)."
+
+        with st.chat_message("assistant"):
+            st.markdown(ans)
+        st.session_state.messages.append({"role": "assistant", "content": ans})
 
 elif selected_nav == "🔎 Conciliación Silver vs Gold":
     st.markdown("<h3 style='color: #2DCCCD;'>🔎 Inspector de Conciliación en Vivo (Silver vs Gold)</h3>", unsafe_allow_html=True)
@@ -547,7 +625,7 @@ elif selected_nav == "🔎 Conciliación Silver vs Gold":
             st.error("❌ DISCREPANCIA DETECTADA: Existen diferencias numéricas entre Silver y Gold.")
 
         st.table(pd.DataFrame({
-            "Métrica": ["Ingresos", "Gastos", "Flujo Neto"],
+            "Métrica": ["Ingresos", "Gastos Totales", "Flujo Neto"],
             "Silver (Suma Directa)": [f"${s_ing:,.2f}", f"${s_gas:,.2f}", f"${s_flujo:,.2f}"],
             "Gold (Consolidado)": [f"${gold_row['ingresos_totales']:,.2f}", f"${gold_row['gastos_totales']:,.2f}", f"${gold_row['flujo_neto']:,.2f}"],
             "Diferencia": [f"${diff_ing:,.2f}", f"${diff_gas:,.2f}", f"${diff_flujo:,.2f}"]
