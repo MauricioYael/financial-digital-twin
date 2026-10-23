@@ -170,6 +170,8 @@ REPORTS_DIR = os.path.join(BASE_DIR, "reports")
 REPORT_PATH = os.path.join(REPORTS_DIR, "validation_report.csv")
 GOLD_PATH = os.path.join(GOLD_DIR, "gold_cliente_mes.parquet")
 SILVER_TX_PATH = os.path.join(SILVER_DIR, "fct_transacciones.parquet")
+if not os.path.exists(REPORTS_DIR):
+    SILVER_TX_PATH = os.path.join(SILVER_DIR, "fct_transacciones.parquet")
 
 bronze_files = glob.glob(os.path.join(BRONZE_DIR, "*.parquet"))
 silver_files = glob.glob(os.path.join(SILVER_DIR, "*.parquet"))
@@ -595,6 +597,14 @@ elif selected_nav == "🤖 Asistente IA":
 
 elif selected_nav == "🔎 Conciliación Silver vs Gold":
     st.markdown("<h3 style='color: #2DCCCD;'>🔎 Inspector de Conciliación en Vivo (Silver vs Gold)</h3>", unsafe_allow_html=True)
+    
+    # Soporte para ambos nombres de archivo Parquet en Silver
+    silver_tx_file = os.path.join(SILVER_DIR, "transacciones.parquet")
+    if not os.path.exists(silver_tx_file):
+        silver_tx_file = os.path.join(SILVER_DIR, "fct_transacciones.parquet")
+
+    df_silver_tx = pd.read_parquet(silver_tx_file) if os.path.exists(silver_tx_file) else pd.DataFrame()
+
     if not df_gold.empty and not df_silver_tx.empty:
         c1, c2 = st.columns(2)
         with c1:
@@ -602,15 +612,23 @@ elif selected_nav == "🔎 Conciliación Silver vs Gold":
         with c2:
             p_id = st.selectbox("Periodo:", df_gold[df_gold['customer_id'] == c_id]['periodo'].unique())
 
+        col_fecha = find_column(df_silver_tx, ['fecha_operacion', 'fecha', 'fecha_transaccion', 'date'])
+        col_tipo = find_column(df_silver_tx, ['tipo_movimiento', 'tipo_transaccion', 'tipo', 'type'])
+        col_monto = find_column(df_silver_tx, ['monto', 'monto_total', 'amount'])
+
+        if col_fecha:
+            df_silver_tx['fecha_norm'] = pd.to_datetime(df_silver_tx[col_fecha], errors='coerce')
+            df_silver_tx['periodo'] = df_silver_tx['fecha_norm'].dt.strftime('%Y-%m')
+
         silver_sub = df_silver_tx[(df_silver_tx['customer_id'] == c_id) & (df_silver_tx['periodo'] == p_id)]
+        
         if 'categoria' in silver_sub.columns:
-            silver_sub = silver_sub[silver_sub['categoria'] != 'TRANSFERENCIA_PROPIA']
+            silver_sub = silver_sub[silver_sub['categoria'].astype(str).str.upper() != 'TRANSFERENCIA_PROPIA']
 
-        col_tipo = find_column(silver_sub, ['tipo_movimiento', 'tipo', 'type'])
-        col_monto = find_column(silver_sub, ['monto', 'monto_total', 'amount'])
+        tipo_series = silver_sub[col_tipo].astype(str).str.upper() if col_tipo else pd.Series()
 
-        s_ing = silver_sub[silver_sub[col_tipo] == 'INGRESO'][col_monto].sum() if col_tipo and col_monto else 0.0
-        s_gas = silver_sub[silver_sub[col_tipo] == 'EGRESO'][col_monto].sum() if col_tipo and col_monto else 0.0
+        s_ing = silver_sub[tipo_series.isin(['INGRESO', 'INGRESOS', 'INCOME'])][col_monto].sum() if col_monto else 0.0
+        s_gas = silver_sub[tipo_series.isin(['EGRESO', 'EGRESOS', 'GASTO', 'GASTOS', 'EXPENSE'])][col_monto].sum() if col_monto else 0.0
         s_flujo = s_ing - s_gas
 
         gold_row = df_gold[(df_gold['customer_id'] == c_id) & (df_gold['periodo'] == p_id)].iloc[0]

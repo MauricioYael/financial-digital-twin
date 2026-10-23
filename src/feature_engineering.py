@@ -21,8 +21,10 @@ def build_feature_matrix():
         print("⚠️ La tabla Gold está vacía.")
         return None
 
-    # Ordenar por cliente y periodo para cálculos secuenciales (Lags y Rolling)
     df = df_gold.sort_values(by=['customer_id', 'periodo']).copy()
+
+    # Identificación flexible de columna de deuda
+    col_deuda = 'pago_deuda_mensual' if 'pago_deuda_mensual' in df.columns else 'pagos_deuda'
 
     # 1. Deltas y Crecimiento Mes a Mes (MoM)
     df['flujo_neto_prev'] = df.groupby('customer_id')['flujo_neto'].shift(1)
@@ -44,7 +46,7 @@ def build_feature_matrix():
         .round(4)
     )
 
-    # 2. Promedios Móviles a 3 Meses (Rolling 3M)
+    # 2. Promedios Móviles a 3 Meses
     df['promedio_movil_ingresos_3m'] = (
         df.groupby('customer_id')['ingresos_totales']
         .transform(lambda x: x.rolling(window=3, min_periods=1).mean())
@@ -57,29 +59,27 @@ def build_feature_matrix():
         .round(2)
     )
 
-    # 3. Ratio de Cobertura de Deuda (Capacidad de pago operativa)
+    # 3. Ratio de Cobertura de Deuda
     df['ratio_cobertura_deuda'] = (
         df['ingresos_totales']
         .sub(df['gastos_operativos'])
-        .div(df['pagos_deuda'].replace(0, np.nan))
-        .fillna(99.0)  # 99 indica sin deuda comprometida
+        .div(df[col_deuda].replace(0, np.nan))
+        .fillna(99.0)
         .clip(upper=99.0)
         .round(2)
     )
 
-    # 4. Score Sintético de Salud Financiera (0 a 100)
-    # Ponderación: 40% Tasa Ahorro, 40% Control de Endeudamiento, 20% Flujo Positivo
+    # 4. Score Sintético de Salud Financiera
     score_ahorro = df['tasa_ahorro'].clip(0, 0.5) / 0.5 * 40
     score_deuda = (1 - df['ratio_endeudamiento'].clip(0, 0.5) / 0.5) * 40
     score_flujo = np.where(df['flujo_neto'] > 0, 20, 0)
 
     df['score_salud_financiera'] = (score_ahorro + score_deuda + score_flujo).round(1)
 
-    # Limpieza de columnas temporales
+    # Limpieza
     cols_drop = ['flujo_neto_prev', 'ingresos_prev', 'gastos_op_prev']
     df = df.drop(columns=[c for c in cols_drop if c in df.columns])
 
-    # Guardar Feature Matrix en formato Parquet
     df.to_parquet(FEATURE_MATRIX_PATH, index=False)
     print(f"✅ Matriz de Features generada exitosamente en: {FEATURE_MATRIX_PATH}")
     print(f"📊 Granularidad: {len(df)} registros | {len(df.columns)} características (features)")

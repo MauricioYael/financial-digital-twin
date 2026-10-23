@@ -1,0 +1,4 @@
+dataset,bronze,silver,rechazados,regla_critica,estado,promueve
+clientes,5,5,0,customer_id único,OK,si
+transacciones,50,49,1,monto y fecha validos,WARN,si
+creditos,12,12,0,cliente existente,OK,si
