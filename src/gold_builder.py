@@ -1,6 +1,8 @@
 import os
 import pandas as pd
 import numpy as np
+# 1. Importación para la automatización de ML
+from feature_engineering import build_feature_matrix
 
 # Definición de rutas alineada a la estructura del proyecto
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -316,17 +318,18 @@ def build_gold_layer():
 
     # 8. Cálculo de KPIs Derivados
 
+    # Gastos Operativos (Gastos Totales - Pago de Deuda)
+    df_gold['gastos_operativos'] = (
+        df_gold['gastos_totales'] - df_gold['pago_deuda_mensual']
+    ).clip(lower=0.0)
+
     # Flujo neto
     df_gold['flujo_neto'] = (
         df_gold['ingresos_totales']
         - df_gold['gastos_totales']
     )
 
-    # ---------------------------------------------------------
     # TASA DE AHORRO
-    # Evitamos división entre cero reemplazando 0 por NaN.
-    # Posteriormente convertimos los NaN nuevamente a 0.0.
-    # ---------------------------------------------------------
     df_gold['tasa_ahorro'] = (
         df_gold['flujo_neto']
         .div(
@@ -337,9 +340,7 @@ def build_gold_layer():
         .fillna(0.0)
     )
 
-    # ---------------------------------------------------------
     # RATIO DE GASTOS FIJOS
-    # ---------------------------------------------------------
     df_gold['ratio_fijo'] = (
         df_gold['gastos_fijos']
         .div(
@@ -349,10 +350,7 @@ def build_gold_layer():
         .fillna(0.0)
     )
 
-    # ---------------------------------------------------------
     # RATIO DE ENDEUDAMIENTO
-    # CORRECCIÓN PRINCIPAL DEL ERROR
-    # ---------------------------------------------------------
     df_gold['ratio_endeudamiento'] = (
         df_gold['pago_deuda_mensual']
         .div(
@@ -366,6 +364,7 @@ def build_gold_layer():
     cols_round = [
         'ingresos_totales',
         'gastos_totales',
+        'gastos_operativos',
         'gastos_fijos',
         'gastos_variables',
         'flujo_neto',
@@ -399,14 +398,14 @@ def build_gold_layer():
         index=False
     )
 
-    print(
-        f"✅ Tabla Gold generada exitosamente en: "
-        f"{output_path}"
-    )
+    print(f"✅ Tabla Gold generada exitosamente en: {output_path}")
+    print(f"📊 Registros procesados: {len(df_gold)}")
 
-    print(
-        f"📊 Registros procesados: {len(df_gold)}"
-    )
+    # ---------------------------------------------------------
+    # 2. DISPARO AUTOMÁTICO DE FEATURE ENGINEERING (ML)
+    # ---------------------------------------------------------
+    print("🔄 Ejecutando Feature Engineering automático para ML...")
+    build_feature_matrix()
 
 
 if __name__ == "__main__":
