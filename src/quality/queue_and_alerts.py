@@ -18,13 +18,20 @@ def inspect_traffic_and_queue(df: pd.DataFrame) -> dict:
     if df.empty or "fecha" not in df.columns:
         return {"status": "EMPTY"}
 
-    df["dt"] = pd.to_datetime(df["fecha"])
-    df["hour"] = df["dt"].dt.hour
-    df["date"] = df["dt"].dt.date
+    # Parseo seguro con errors='coerce' para tolerar registros anómalos de prueba (ej. 2026-02-31)
+    df["dt"] = pd.to_datetime(df["fecha"], errors="coerce")
+    
+    # Filtrar registros que no tengan fecha válida
+    df_valid = df.dropna(subset=["dt"]).copy()
+    if df_valid.empty:
+        return {"status": "NO_VALID_DATES"}
+
+    df_valid["hour"] = df_valid["dt"].dt.hour
+    df_valid["date"] = df_valid["dt"].dt.date
 
     # Conteo por hora
-    hourly_counts = df.groupby(["date", "hour"]).size().reset_index(name="tx_count")
-    total_tx = len(df)
+    hourly_counts = df_valid.groupby(["date", "hour"]).size().reset_index(name="tx_count")
+    total_tx = len(df_valid)
 
     alerts = []
     

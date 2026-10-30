@@ -1,0 +1,11 @@
+transaction_id,customer_id,fecha,tipo_transaccion,categoria,monto,canal,estatus,fecha_evento_dt,fecha_carga,hora_carga,fecha_evento,hora_evento
+TX_000011,C0001,2026-01-28,Ingreso,Nomina,14250.0,Transferencia SPEI,Completada,2026-01-28,2026-10-23,03:19:05,2026-01-28,00:00:00
+TX_000020,C0002,2026-01-28,Ingreso,Nomina,21000.0,Transferencia SPEI,Completada,2026-01-28,2026-10-23,03:19:05,2026-01-28,00:00:00
+TX_000027,C0003,2026-01-28,Ingreso,Nomina,9000.0,Transferencia SPEI,Completada,2026-01-28,2026-10-23,03:19:05,2026-01-28,00:00:00
+TX_000031,C0004,2026-01-28,Ingreso,Nomina,17500.0,Transferencia SPEI,Completada,2026-01-28,2026-10-23,03:19:05,2026-01-28,00:00:00
+TX_000035,C0005,2026-01-28,Ingreso,Nomina,11000.0,Transferencia SPEI,Completada,2026-01-28,2026-10-23,03:19:05,2026-01-28,00:00:00
+TX_000039,C0006,2026-01-28,Ingreso,Nomina,24000.0,Transferencia SPEI,Completada,2026-01-28,2026-10-23,03:19:05,2026-01-28,00:00:00
+TX_000043,C0007,2026-01-28,Ingreso,Nomina,16000.0,Transferencia SPEI,Completada,2026-01-28,2026-10-23,03:19:05,2026-01-28,00:00:00
+TX_000047,C0008,2026-01-28,Ingreso,Nomina,27500.0,Transferencia SPEI,Completada,2026-01-28,2026-10-23,03:19:05,2026-01-28,00:00:00
+TX_000051,C0009,2026-01-28,Ingreso,Nomina,14500.0,Transferencia SPEI,Completada,2026-01-28,2026-10-23,03:19:05,2026-01-28,00:00:00
+TX_000055,C0010,2026-01-28,Ingreso,Nomina,34000.0,Transferencia SPEI,Completada,2026-01-28,2026-10-23,03:19:05,2026-01-28,00:00:00

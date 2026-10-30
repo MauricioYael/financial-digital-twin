@@ -48,8 +48,11 @@ def ingest_incremental(source_file_path: str, is_reprocess: bool = False, reproc
         print("⚠️ Archivo sin registros.")
         return
 
-    # Normalizar timestamp del evento
-    df["fecha_evento_dt"] = pd.to_datetime(df["fecha"])
+    # Normalizar timestamp del evento de forma segura (ignora errores de fechas como 31 de feb)
+    df["fecha_evento_dt"] = pd.to_datetime(df["fecha"], errors="coerce")
+    
+    # Filtrar únicamente los registros con fecha válida para la ingesta incremental
+    df = df.dropna(subset=["fecha_evento_dt"]).copy()
     
     now_utc = datetime.datetime.now(datetime.timezone.utc)
     # Tiempos de Carga Desacoplados (Auditoría Técnica)
@@ -86,12 +89,10 @@ def ingest_incremental(source_file_path: str, is_reprocess: bool = False, reproc
         print(f"📁 Partición RAW guardada: {raw_partition_path} ({len(group)} filas)")
 
     # Almacenar en Bronze Particionado (Parquet)
-    # Metadatos Bronze
     df_to_process["_raw_sha256"] = hashlib.sha256(df_to_process.to_json().encode()).hexdigest()
     df_to_process["_ingestion_mode"] = "REPROCESS" if is_reprocess else "INCREMENTAL"
 
     bronze_partition_dir = os.path.join(BRONZE_DIR, "transacciones_particionadas")
-    # Escritura particionada por fecha_evento nativa en Parquet
     df_to_process.drop(columns=["fecha_evento_dt"]).to_parquet(
         bronze_partition_dir,
         partition_cols=["fecha_evento"],
@@ -107,9 +108,6 @@ def ingest_incremental(source_file_path: str, is_reprocess: bool = False, reproc
         print(f"🎯 Watermark actualizado a: {max_ts}")
 
 if __name__ == "__main__":
-    # Prueba con archivo base
     sample_file = os.path.join(RAW_DIR, "transacciones.csv")
     if os.path.exists(sample_file):
         ingest_incremental(sample_file)
-    else:
-        print(f"Coloca un archivo transacciones.csv en {RAW_DIR} para probar.")

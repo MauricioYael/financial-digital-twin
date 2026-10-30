@@ -13,6 +13,9 @@ from src.quality.queue_and_alerts import inspect_traffic_and_queue
 from src.quality.profile_data import run_profiling
 from src.transformations.transform_silver import process_silver
 
+# Importar el generador de la Capa Gold
+from src.gold_builder import build_gold_layer
+
 def execute_full_pipeline(trigger_source: str = "MANUAL"):
     start_time = datetime.datetime.now()
     print("\n" + "=" * 70)
@@ -26,21 +29,25 @@ def execute_full_pipeline(trigger_source: str = "MANUAL"):
         for filename, sheet_id in SOURCES.items():
             download_sheet(sheet_id, os.path.join(RAW_DIR, filename))
 
-        # FASE 1: Ingesta Incremental, Particionamiento Diario y Auditoría de Tráfico (Colas)
+        # FASE 1: Ingesta Incremental
         print("\n--- [FASE 1/4] Ingesta Incremental y Análisis de Tráfico ---")
         tx_path = os.path.join(RAW_DIR, "transacciones.csv")
         if os.path.exists(tx_path):
             df_tx_raw = pd.read_csv(tx_path)
-            inspect_traffic_and_queue(df_tx_raw)  # Analiza picos por hora y genera alertas
-            ingest_incremental(tx_path)           # Ejecuta carga incremental y particionado
+            inspect_traffic_and_queue(df_tx_raw)
+            ingest_incremental(tx_path)
 
-        # FASE 2: Perfilado de Datos y Estadísticas
+        # FASE 2: Perfilado de Datos
         print("\n--- [FASE 2/4] Perfilado y Auditoría de Calidad ---")
         run_profiling()
 
-        # FASE 3: Transformación a Silver, Enriquecimiento y Cuarentena
+        # FASE 3: Transformación Silver
         print("\n--- [FASE 3/4] Transformación Silver y Aislamiento de Errores ---")
         process_silver()
+
+        # FASE 4: Consolidación Capa Gold y Feature Engineering
+        print("\n--- [FASE 4/4] Consolidación Capa Gold y Feature Engineering ---")
+        build_gold_layer()
 
         elapsed = (datetime.datetime.now() - start_time).total_seconds()
         print("\n" + "=" * 70)

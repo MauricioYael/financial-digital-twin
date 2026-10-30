@@ -1,0 +1,6 @@
+transaction_id,customer_id,fecha,tipo_transaccion,categoria,monto,canal,estatus,fecha_evento_dt,fecha_carga,hora_carga,fecha_evento,hora_evento
+TX_000022,C0003,2026-01-05,Gasto,Vivienda,5000.0,Domiciliacion,Completada,2026-01-05,2026-10-23,03:19:05,2026-01-05,00:00:00
+TX_000028,C0004,2026-01-05,Gasto,Educacion,9000.0,Domiciliacion,Completada,2026-01-05,2026-10-23,03:19:05,2026-01-05,00:00:00
+TX_000032,C0005,2026-01-05,Gasto,Vivienda,6200.0,Domiciliacion,Completada,2026-01-05,2026-10-23,03:19:05,2026-01-05,00:00:00
+TX_000040,C0007,2026-01-05,Gasto,Vivienda,9000.0,Domiciliacion,Completada,2026-01-05,2026-10-23,03:19:05,2026-01-05,00:00:00
+TX_000048,C0009,2026-01-05,Gasto,Vivienda,8000.0,Domiciliacion,Completada,2026-01-05,2026-10-23,03:19:05,2026-01-05,00:00:00

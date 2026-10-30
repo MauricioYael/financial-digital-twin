@@ -1,0 +1,4 @@
+transaction_id,customer_id,fecha,tipo_transaccion,categoria,monto,canal,estatus,fecha_evento_dt,fecha_carga,hora_carga,fecha_evento,hora_evento
+TX_000005,C0001,2026-01-12,Gasto,Transporte / Gasolina / Uber,450.0,Tarjeta Debito,Completada,2026-01-12,2026-10-23,03:19:05,2026-01-12,00:00:00
+TX_000024,C0003,2026-01-12,Gasto,Servicios,1100.0,Domiciliacion,Completada,2026-01-12,2026-10-23,03:19:05,2026-01-12,00:00:00
+TX_000049,C0009,2026-01-12,Gasto,Credito,2500.0,Domiciliacion,Completada,2026-01-12,2026-10-23,03:19:05,2026-01-12,00:00:00

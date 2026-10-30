@@ -1,0 +1,2 @@
+transaction_id,customer_id,fecha,tipo_transaccion,categoria,monto,canal,estatus,fecha_evento_dt,fecha_carga,hora_carga,fecha_evento,hora_evento
+TX_000066,C0003,2026-02-19,Gasto,Farmacia y Salud,450.0,Tarjeta Debito,Completada,2026-02-19,2026-10-23,03:22:51,2026-02-19,00:00:00

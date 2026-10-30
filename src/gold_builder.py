@@ -1,9 +1,28 @@
 import os
+import sys
 import pandas as pd
 import numpy as np
-from feature_engineering import build_feature_matrix
 
+# Configurar rutas para importar módulos internos de forma segura
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
+SRC_DIR = os.path.dirname(__file__)
+if SRC_DIR not in sys.path:
+    sys.path.insert(0, SRC_DIR)
+
+# Importación segura de feature_engineering
+try:
+    from feature_engineering import build_feature_matrix
+except ModuleNotFoundError:
+    try:
+        from src.feature_engineering import build_feature_matrix
+    except ModuleNotFoundError:
+        print("⚠️ Advertencia: No se encontró el módulo 'feature_engineering'. Se omitirá la matriz ML.")
+        def build_feature_matrix():
+            pass
+
 SILVER_DIR = os.path.join(BASE_DIR, "data", "silver")
 GOLD_DIR = os.path.join(BASE_DIR, "data", "gold")
 

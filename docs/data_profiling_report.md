@@ -6,7 +6,7 @@
 
 ## 🔹 Dataset: `clientes.parquet`
 * **Total de Registros:** 5
-* **Total de Columnas:** 10
+* **Total de Columnas:** 9
 * **Posibles Duplicados en Clave Primaria:** 0
 
 ### Conteo de Nulos y Tipos de Datos:
@@ -19,9 +19,8 @@
 | `ingreso_mensual_base` | `int64` | 0 | 0.0% |
 | `saldo_inicial_cuenta` | `int64` | 0 | 0.0% |
 | `fecha_alta` | `str` | 0 | 0.0% |
-| `_ingested_at` | `str` | 0 | 0.0% |
-| `_source_file` | `str` | 0 | 0.0% |
-| `_sha256_hash` | `str` | 0 | 0.0% |
+| `_ingestion_timestamp` | `str` | 0 | 0.0% |
+| `_raw_sha256` | `str` | 0 | 0.0% |
 
 ---
 
@@ -48,7 +47,7 @@
 
 ## 🔹 Dataset: `compromisos_fijos.parquet`
 * **Total de Registros:** 12
-* **Total de Columnas:** 10
+* **Total de Columnas:** 9
 * **Posibles Duplicados en Clave Primaria:** 0
 
 ### Conteo de Nulos y Tipos de Datos:
@@ -61,9 +60,8 @@
 | `monto_mensual` | `int64` | 0 | 0.0% |
 | `dia_pago_mes` | `int64` | 0 | 0.0% |
 | `estado` | `str` | 0 | 0.0% |
-| `_ingested_at` | `str` | 0 | 0.0% |
-| `_source_file` | `str` | 0 | 0.0% |
-| `_sha256_hash` | `str` | 0 | 0.0% |
+| `_ingestion_timestamp` | `str` | 0 | 0.0% |
+| `_raw_sha256` | `str` | 0 | 0.0% |
 
 ---
 
@@ -90,7 +88,7 @@
 
 ## 🔹 Dataset: `transacciones.parquet`
 * **Total de Registros:** 50
-* **Total de Columnas:** 11
+* **Total de Columnas:** 10
 * **Posibles Duplicados en Clave Primaria:** 2
 
 ### Conteo de Nulos y Tipos de Datos:
@@ -105,7 +103,6 @@
 | `canal` | `str` | 0 | 0.0% |
 | `estatus` | `str` | 0 | 0.0% |
 | `_ingestion_timestamp` | `str` | 0 | 0.0% |
-| `_source_file` | `str` | 0 | 0.0% |
 | `_raw_sha256` | `str` | 0 | 0.0% |
 
 ### Hallazgos de Calidad en Montos:

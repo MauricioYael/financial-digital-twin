@@ -1,0 +1,2 @@
+transaction_id,customer_id,fecha,tipo_transaccion,categoria,monto,canal,estatus,fecha_evento_dt,fecha_carga,hora_carga,fecha_evento,hora_evento
+TX_000010,C0001,2026-01-26,Gasto,Compras Personales y Ropa,1890.0,Tarjeta Credito,Completada,2026-01-26,2026-10-23,03:19:05,2026-01-26,00:00:00
