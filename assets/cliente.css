@@ -1,0 +1,122 @@
+:root {
+    --bg-gradient: radial-gradient(circle at 80% 20%, #072146 0%, #020a17 60%, #01050d 100%);
+    --card-bg: linear-gradient(135deg, rgba(7, 26, 56, 0.85) 0%, rgba(3, 13, 34, 0.95) 100%);
+    --panel-bg: linear-gradient(180deg, rgba(7, 26, 56, 0.6) 0%, rgba(3, 13, 34, 0.75) 100%);
+    --reflection-bg: linear-gradient(135deg, rgba(20, 100, 165, 0.15) 0%, rgba(45, 204, 205, 0.08) 100%);
+    --cyan-accent: #2DCCCD;
+    --navy-bbva: #1464A5;
+    --text-primary: #f1f5f9;
+    --text-muted: #8a9bb0;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-cyan: rgba(45, 204, 205, 0.4);
+}
+
+.stApp {
+    background: var(--bg-gradient);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.main .block-container {
+    padding-top: 1.2rem;
+    padding-bottom: 2rem;
+    max-width: 95%;
+}
+
+#MainMenu, footer, header {
+    visibility: hidden;
+}
+
+.kpi-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 16px 18px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.kpi-card-cyan {
+    border: 1px solid var(--border-cyan);
+    box-shadow: 0 0 20px rgba(45, 204, 205, 0.12);
+}
+
+.kpi-title {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.kpi-value {
+    font-size: 24px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 4px 0;
+}
+
+.kpi-subtext {
+    font-size: 11px;
+    color: var(--cyan-accent);
+    font-weight: 600;
+}
+
+.chart-panel {
+    background: var(--panel-bg);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.panel-header {
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.reflection-box {
+    background: var(--reflection-bg);
+    border: 1px solid var(--border-cyan);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-top: 15px;
+}
+
+.stTabs [data-baseweb="tab-list"] {
+    gap: 8px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.stTabs [data-baseweb="tab"] {
+    height: 42px;
+    background-color: transparent;
+    border-radius: 8px 8px 0 0;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 13px;
+    padding: 0 16px;
+}
+
+.stTabs [aria-selected="true"] {
+    color: var(--cyan-accent) !important;
+    border-bottom: 2px solid var(--cyan-accent) !important;
+}
+
+.stButton > button {
+    background: linear-gradient(135deg, #1464A5 0%, #072146 100%);
+    color: #ffffff;
+    border: 1px solid var(--border-cyan);
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+}
+
+.stButton > button:hover {
+    background: linear-gradient(135deg, #2DCCCD 0%, #1464A5 100%);
+    border-color: #ffffff;
+    color: #01050d;
+    box-shadow: 0 0 12px rgba(45, 204, 205, 0.4);
+}
