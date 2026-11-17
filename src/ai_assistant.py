@@ -29,7 +29,13 @@ REGLAS DE COMUNICACIÓN Y TONO (ESTRICTAS):
 1. PROHIBIDAS MULETILLAS Y SALUDOS REPETITIVOS: No uses saludos ("¡Hola!", "¡Qué gusto!"), felicitaciones excesivas ("¡Muchas felicidades!", "¡Qué gran noticia!") ni frases clichés ("Te cuento que..."). Ve directo al grano.
 2. ENFOQUE EXCLUSIVO EN LA PREGUNTA ACTUAL: Si el usuario plantea una nueva meta (viaje, automóvil, monto específico), NUNCA menciones metas pasadas ni el Fondo de Emergencia a menos que el usuario lo pregunte expresamente.
 3. CÁLCULO DE NUEVAS METAS: Cuando el usuario proporcione un monto para una nueva meta (ej. $100,000), utiliza el disponible libre mensual del cliente para explicar en cuántos meses logrará el objetivo.
-4. PRECISIÓN Y BREVEDAD: Mantén las respuestas en 2 o 3 oraciones. Usa las cifras numéricas exactas entregadas en el contexto sin inventar datos.
+4. FORMATO DE CONSULTAS DE SALUD FINANCIERA / INGRESOS / KPIS: Cuando el usuario pregunte por sus ingresos, resumen financiero, o datos del mes, debes responder obligatoriamente utilizando un formato de lista desglosada con los 5 indicadores de las tarjetas principales:
+   - 💵 Ingresos Totales: $... MXN
+   - 🛒 Gastos del Día a Día: $... MXN
+   - 💳 Pago de Créditos: $... MXN
+   - 🌱 Dinero Libre (Flujo): $... MXN
+   - 📊 % Ahorro del Mes: ...%
+5. PRECISIÓN Y BREVEDAD: Mantén las respuestas en 2 o 3 oraciones. Usa las cifras numéricas exactas entregadas en el contexto sin inventar datos.
 """
 
 MODELOS_GEMINI = [
@@ -61,7 +67,7 @@ def invocar_gemini_resiliente(prompt: str, max_intentos: int = 2) -> str:
                 continue
     raise RuntimeError("No se pudo obtener respuesta de ningún modelo de Gemini.")
 
-def process_user_query_with_llm(user_prompt: str, authenticated_customer_id: str) -> dict:
+def process_user_query_with_llm(user_prompt: str, authenticated_customer_id: str, periodo: str = None) -> dict:
     logger = get_logger()
     prompt_lower = user_prompt.lower()
 
@@ -106,7 +112,7 @@ def process_user_query_with_llm(user_prompt: str, authenticated_customer_id: str
         except ValueError:
             pass
 
-    summary = get_financial_summary(authenticated_customer_id)
+    summary = get_financial_summary(authenticated_customer_id, periodo=periodo)
     flujo_disponible = summary.get("flujo_neto", 0.0)
 
     # Clasificación de la intención
@@ -162,9 +168,21 @@ def process_user_query_with_llm(user_prompt: str, authenticated_customer_id: str
     elif intent == "SUMMARY":
         logger.log_event("INFO", "assistant", "tool=get_financial_summary", "SUCCESS")
         
+        # Extraer los 5 indicadores exactos recibidos de la herramienta
+        ingresos_tot = summary.get("ingresos_totales", 0.0)
+        gastos_op = summary.get("gastos_operativos", 0.0)
+        pago_deuda = summary.get("pagos_deuda", summary.get("pago_deuda_mensual", 0.0))
+        flujo_neto = summary.get("flujo_neto", 0.0)
+        tasa_ahorro = summary.get("tasa_ahorro_pct", 0.0)
+        periodo_actual = summary.get("periodo", "último periodo")
+
         datos_contexto = (
-            f"Periodo: {summary['periodo']} | Dinero libre (flujo neto): ${summary['flujo_neto']:,.2f} MXN | "
-            f"Gastos operativos del mes: ${summary['gastos_operativos']:,.2f} MXN | Tasa de ahorro: {summary['tasa_ahorro_pct']:.1f}%."
+            f"Periodo de consulta: {periodo_actual}\n"
+            f"- Ingresos Totales: ${ingresos_tot:,.2f} MXN\n"
+            f"- Gastos del Día a Día: ${gastos_op:,.2f} MXN\n"
+            f"- Pago de Créditos: ${pago_deuda:,.2f} MXN\n"
+            f"- Dinero Libre (Flujo): ${flujo_neto:,.2f} MXN\n"
+            f"- % Ahorro del Mes: {tasa_ahorro:.1f}%\n"
         )
         response_text = format_response_with_llm(user_prompt, datos_contexto, intent="SUMMARY")
         return {

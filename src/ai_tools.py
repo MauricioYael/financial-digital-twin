@@ -3,13 +3,22 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
-GOLD_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "gold", "gold_cliente_mes.parquet"))
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..")) if os.path.basename(CURRENT_DIR) == "src" else CURRENT_DIR
+GOLD_PATH = os.path.join(PROJECT_ROOT, "data", "gold", "gold_cliente_mes.parquet")
+
+def _load_gold_data() -> pd.DataFrame:
+    """Carga de forma segura el dataframe de la Capa Gold."""
+    if os.path.exists(GOLD_PATH):
+        return pd.read_parquet(GOLD_PATH)
+    return pd.DataFrame()
 
 def get_financial_summary(authenticated_customer_id: str, periodo: str = None) -> dict:
-    if not os.path.exists(GOLD_PATH):
-        return {"status": "error", "message": "Capa Gold no encontrada"}
-    
-    df_gold = pd.read_parquet(GOLD_PATH)
+    """Recupera la información financiera del cliente de la Capa Gold para un periodo específico."""
+    df_gold = _load_gold_data()
+    if df_gold.empty:
+        return {"status": "error", "message": "Capa Gold no encontrada o vacía."}
+        
     df_user = df_gold[df_gold["customer_id"] == authenticated_customer_id]
     
     if df_user.empty:
@@ -31,39 +40,41 @@ def get_financial_summary(authenticated_customer_id: str, periodo: str = None) -
     return {
         "status": "success",
         "customer_id": authenticated_customer_id,
-        "periodo": str(row.get("periodo")),
+        "periodo": str(row.get("periodo", "")),
         "ingresos_totales": val_ingresos,
         "gastos_operativos": val_gastos_op,
+        "pagos_deuda": val_deuda,
         "pago_deuda": val_deuda,
         "flujo_neto": val_flujo,
         "tasa_ahorro_pct": val_ahorro,
         "fecha_actualizacion": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
 
-def get_financial_goal(authenticated_customer_id: str, goal_id: str = "meta_emergencia") -> dict:
+def get_financial_goal(authenticated_customer_id: str) -> dict:
+    """Retorna los datos de meta / reserva de ahorro del cliente."""
     summary = get_financial_summary(authenticated_customer_id)
     if summary.get("status") != "success":
         return summary
 
     flujo = summary.get("flujo_neto", 0.0)
-    target_amount = 50000.0
-    current_saved = max(0.0, flujo * 3)
-    remaining = max(0.0, target_amount - current_saved)
-    monthly_capacity = max(1000.0, flujo)
-    months_needed = int(np.ceil(remaining / monthly_capacity)) if monthly_capacity > 0 else 999
+    saldo_actual = max(0.0, flujo * 3.0)  # Fondo de emergencia estimado (3 meses)
+    monto_meta = 50000.0  # Meta estándar de demostración
+    monto_faltante = max(0.0, monto_meta - saldo_actual)
+    plazo_estimado = int(np.ceil(monto_faltante / flujo)) if flujo > 0 else 999
 
     return {
         "status": "success",
-        "goal_id": goal_id,
-        "nombre_meta": "Fondo de Emergencia (50,000 MXN)",
-        "monto_objetivo": target_amount,
-        "saldo_actual": current_saved,
-        "monto_faltante": remaining,
-        "capacidad_ahorro_mensual": monthly_capacity,
-        "plazo_estimado_meses": months_needed
+        "customer_id": authenticated_customer_id,
+        "nombre_meta": "Fondo de Reserva",
+        "monto_meta": monto_meta,
+        "saldo_actual": saldo_actual,
+        "monto_faltante": monto_faltante,
+        "capacidad_mensual": flujo,
+        "plazo_estimado_meses": plazo_estimado
     }
 
 def simulate_goal(authenticated_customer_id: str, pct_gasto_reduccion: float = 0.0, aporte_extra: float = 0.0) -> dict:
+    """Simula el impacto en el margen disponible y plazos al reducir gastos variables."""
     goal_info = get_financial_goal(authenticated_customer_id)
     if goal_info.get("status") != "success":
         return goal_info

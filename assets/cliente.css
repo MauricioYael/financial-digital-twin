@@ -23,7 +23,7 @@
     max-width: 95%;
 }
 
-#MainMenu, footer, header {
+#MainMenu, footer{
     visibility: hidden;
 }
 
@@ -85,24 +85,57 @@
     margin-top: 15px;
 }
 
+/* -----------------------------------------------------------------------------
+ * PESTAÑAS TIPO CÁPSULA REDONDEADA (ESTILO BBVA)
+ * ----------------------------------------------------------------------------- */
+
+/* Eliminar líneas rojas/naranjas y contenedores nativos de Streamlit */
+div[data-baseweb="tab-highlight-title"],
+div[data-baseweb="tab-border-selected"],
+div[data-baseweb="tab-highlight"] {
+    display: none !important;
+    background-color: transparent !important;
+    height: 0px !important;
+}
+
+/* Lista de pestañas */
 .stTabs [data-baseweb="tab-list"] {
-    gap: 8px;
-    border-bottom: 1px solid var(--border-subtle);
+    gap: 12px !important;
+    background-color: transparent !important;
+    border-bottom: none !important;
+    padding: 8px 0 !important;
 }
 
-.stTabs [data-baseweb="tab"] {
-    height: 42px;
-    background-color: transparent;
-    border-radius: 8px 8px 0 0;
-    color: var(--text-muted);
-    font-weight: 600;
-    font-size: 13px;
-    padding: 0 16px;
+/* Estado Normal de cada Pestaña (Totalmente Redondeada) */
+.stTabs button[data-baseweb="tab"] {
+    height: 44px !important;
+    background: rgba(7, 26, 56, 0.7) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 30px !important; /* Esquinas cápsula redondeada */
+    color: #8a9bb0 !important;
+    font-weight: 600 !important;
+    font-size: 13.5px !important;
+    padding: 0 24px !important;
+    box-shadow: none !important;
+    outline: none !important;
+    transition: all 0.25s ease-in-out !important;
 }
 
-.stTabs [aria-selected="true"] {
-    color: var(--cyan-accent) !important;
-    border-bottom: 2px solid var(--cyan-accent) !important;
+/* Hover en pestañas inactivas */
+.stTabs button[data-baseweb="tab"]:hover {
+    background: rgba(20, 100, 165, 0.3) !important;
+    border-color: rgba(45, 204, 205, 0.4) !important;
+    color: #ffffff !important;
+}
+
+/* Pestaña Seleccionada / Activa (Azul BBVA con Cian) */
+.stTabs button[aria-selected="true"] {
+    background: linear-gradient(135deg, #1464A5 0%, #072146 100%) !important;
+    border: 1.5px solid #2DCCCD !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    border-radius: 30px !important;
+    box-shadow: 0 4px 16px rgba(45, 204, 205, 0.35) !important;
 }
 
 .stButton > button {
@@ -119,4 +152,292 @@
     border-color: #ffffff;
     color: #01050d;
     box-shadow: 0 0 12px rgba(45, 204, 205, 0.4);
+}
+.dashboard-subtitle {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin: 0;
+}
+
+.dashboard-title {
+    color: #ffffff;
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.cyan-highlight {
+    color: var(--cyan-accent);
+}
+
+.dashboard-description {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+/* Encabezado del Sidebar */
+.sidebar-brand-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 5px 0 20px 0;
+    with: 100%;
+}
+
+.sidebar-brand-divider {
+    height: 20px;
+    width: 1px;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-brand-text {
+    color: #FFFFFF;
+    font-weight: 800;
+    font-size: 13px;
+}
+
+/* Reflexión Financiera */
+.reflection-title {
+    color: #2DCCCD;
+    margin: 0 0 8px 0;
+    font-size: 16px;
+}
+
+.reflection-desc {
+    color: #e2e8f0;
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.reflection-list {
+    color: #cbd5e1;
+    font-size: 12px;
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+/* Forzar visibilidad de la barra lateral en el Dashboard */
+section[data-testid="stSidebar"] {
+    display: flex !important;
+    visibility: visible !important;
+    background: linear-gradient(180deg, #071a38 0%, #030d22 100%) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-testid="stSidebarCollapsedControl"],
+[data-testid="stSidebarExpandButton"],
+button[aria-label="Close sidebar"],
+button[aria-label="Open sidebar"] {
+    display: flex !important;
+    visibility: visible !important;
+    color: #ffffff !important;
+    z-index: 100000 !important;
+}
+
+/* Estilos para la ventana desplegable del Asistente IA (Popover) */
+div[data-testid="stPopoverBody"] {
+    background: #071a38 !important;
+    border: 1px solid var(--border-cyan) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5) !important;
+    width: 380px !important;
+    padding: 16px !important;
+}
+
+div[data-testid="stPopover"] > button {
+    background: linear-gradient(135deg, #2DCCCD 0%, #1464A5 100%) !important;
+    color: #01050d !important;
+    font-weight: 700 !important;
+    border: none !important;
+    border-radius: 20px !important;
+    box-shadow: 0 4px 15px rgba(45, 204, 205, 0.3) !important;
+    transition: transform 0.2s ease !important;
+}
+
+div[data-testid="stPopover"] > button:hover {
+    transform: scale(1.03) !important;
+    box-shadow: 0 6px 20px rgba(45, 204, 205, 0.5) !important;
+}
+
+/* Cabecera de la sección de Proyecciones */
+.projections-header {
+    margin-bottom: 16px;
+}
+
+.projections-title {
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0;
+}
+
+.projections-title span {
+    color: var(--cyan-accent);
+}
+
+.projections-subtitle {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+/* Cabecera de sub-panel con icono */
+.panel-icon-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.panel-icon-badge {
+    background: rgba(45, 204, 205, 0.15);
+    border: 1px solid var(--border-cyan);
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-size: 18px;
+}
+
+.panel-title-text h4 {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.panel-title-text p {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin: 0;
+}
+
+/* Tabla personalizada de Métricas */
+.custom-metrics-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.custom-metrics-table th {
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.custom-metrics-table td {
+    color: #ffffff;
+    font-size: 13px;
+    padding: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.badge-accuracy-high {
+    background: rgba(45, 204, 205, 0.2);
+    border: 1px solid #2DCCCD;
+    color: #2DCCCD;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.badge-accuracy-base {
+    background: rgba(138, 155, 176, 0.2);
+    border: 1px solid #8a9bb0;
+    color: #8a9bb0;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+/* -----------------------------------------------------------------------------
+ * BOTÓN FLOTANTE FIJO (FLOATING ACTION BUTTON) EN PANTALLA PRINCIPAL
+ * ----------------------------------------------------------------------------- */
+
+/* Forzar que el botón del Popover se desancle del flujo y flote fijo */
+div[data-testid="stPopover"] > button {
+    position: fixed !important;
+    top: 50% !important; /* Centrado vertical */
+    right: 30px !important; /* Distancia del borde derecho */
+    transform: translateY(-50%) !important; /* Ajuste para centrado perfecto */
+    z-index: 9999999 !important;
+    
+    /* Estilos visuales de la cápsula BBVA */
+    background: linear-gradient(135deg, #2DCCCD 0%, #1464A5 100%) !important;
+    color: #01050d !important;
+    font-weight: 800 !important;
+    font-size: 14px !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.6) !important;
+    border-radius: 30px !important;
+    padding: 12px 24px !important;
+    box-shadow: 0 8px 30px rgba(45, 204, 205, 0.5) !important;
+    transition: all 0.25s ease-in-out !important;
+}
+
+div[data-testid="stPopover"] > button:hover {
+    transform: translateY(-50%) scale(1.05) !important;
+    box-shadow: 0 12px 35px rgba(45, 204, 205, 0.75) !important;
+}
+
+/* Modal desplegable del Chat (se abre al centro a la derecha) */
+div[data-testid="stPopoverBody"] {
+    position: fixed !important;
+    top: 55% !important;
+    right: 30px !important;
+    transform: translateY(-50%) !important;
+    z-index: 10000000 !important;
+    background: linear-gradient(180deg, #071a38 0%, #030d22 100%) !important;
+    border: 1.5px solid #2DCCCD !important;
+    border-radius: 20px !important;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.8) !important;
+    width: 390px !important;
+    padding: 18px !important;
+}
+
+/* Modal desplegable del Chat */
+div[data-testid="stPopoverBody"] {
+    background: linear-gradient(180deg, #071a38 0%, #030d22 100%) !important;
+    border: 1.5px solid #2DCCCD !important;
+    border-radius: 20px !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6) !important;
+    width: 390px !important;
+    padding: 18px !important;
+}
+
+/* Estilo del Spinner de Carga del Chat */
+div[data-testid="stSpinner"] {
+    color: #2DCCCD !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+}
+
+div[data-testid="stSpinner"] > div {
+    border-top-color: #2DCCCD !important;
+}
+/* Convertir el sidebar en contenedor Flexbox vertical */
+section[data-testid="stSidebar"] > div:first-child {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100vh !important;
+}
+
+/* Espaciador flexible que crece para enviar todo lo inferior al fondo */
+.sidebar-spacer {
+    flex-grow: 1 !important;
+    min-height: 40vh !important;
+}
+
+/* Estilo estilizado para el botón de Cerrar Sesión en el pie */
+div[data-testid="stSidebar"] .stButton {
+    margin-top: auto !important;
+    padding-bottom: 20px !important;
 }
